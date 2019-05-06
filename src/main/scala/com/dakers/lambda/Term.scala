@@ -5,65 +5,50 @@ package com.dakers.lambda
  *
  * Nederpelt, Rob. Type Theory and Formal Proof: An Introduction (Kindle Locations 645-646). Cambridge University Press. Kindle Edition.
  */
-abstract class Term {
-  def free(): Set[String]
-
-  def bound(): Set[String]
-
-}
+abstract class Term(val free: Set[String], val bound: Set[String])
 
 object Term {
   val AbstOp = "/|"
   val AbstSep = "."
 
-  /** Prevents creating terms with naming collisions, hence "safe".
-   * For now want to throw an exception whenever there is a collision, but later it may make sense to automatically
-   * apply the Barendregt convention to bound variables.
-   *
-   * @param v1     Term
-   * @param v2     Term
-   * @param isFree True if comparing free variables, false if comparing bound
-   * @return Set of all unique elements of two terms, unless there is a term in common.
-   * @throws RuntimeException if the terms have a variable in common
-   */
-  private def safeUnion(v1: Term, v2: Term, isFree: Boolean): Set[String] = {
-    val boundOrFree1 = if (isFree) v1.free() else v1.bound()
-    val boundOrFree2 = if (isFree) v2.free() else v2.bound()
-    val intersection = boundOrFree1 intersect boundOrFree2
-    if (!(intersection.isEmpty)) {
-      val varType = if (isFree) "Free" else "Bound"
-      throw new RuntimeException(s"$varType variable(s) $intersection occurred in both $v1 and $v2")
-    }
-    boundOrFree1 ++ boundOrFree2
-  }
-
-  def safeFreeUnion(v1: Term, v2: Term) = safeUnion(v1, v2, true)
-
-  def safeBoundUnion(v1: Term, v2: Term) = safeUnion(v1, v2, false)
 }
 
-case class Var(val varName: String) extends Term {
+case class Var(val varName: String) extends Term(Set(varName), Set.empty) {
   override def toString: String = varName
-
-  override def free(): Set[String] = Set(varName)
-
-  override def bound(): Set[String] = Set()
 }
 
-case class App(t1: Term, t2: Term) extends Term {
+case class App(t1: Term, t2: Term) extends Term({
+  val intersection = t1.free intersect (t2.free)
+  if (!intersection.isEmpty) {
+    val commonVars = intersection.mkString(",")
+    throw new RuntimeException(s"Cannot apply terms with a shared free variable. Variables in common: $commonVars. $Term 1: $t1. Term 2: $t2.")
+  }
+  t1.free ++ t2.free
+},
+  {
+    val intersection = t1.bound intersect (t2.bound)
+    if (!intersection.isEmpty) {
+      val commonVars = intersection.mkString(",")
+      throw new RuntimeException(s"Cannot apply terms with a shared bound variable. Variables in common: $commonVars. $Term 1: $t1. Term 2: $t2.")
+    }
+    t1.bound ++ t2.bound
+  }
+) {
   override def toString: String = t1.toString + t2.toString
-
-  override def free(): Set[String] = Term.safeFreeUnion(t1, t2)
-
-  override def bound(): Set[String] = Term.safeBoundUnion(t1, t2)
 }
 
-case class Abst(t1: Term, t2: Var) extends Term {
+case class Abst(t1: Term, t2: Var) extends Term(t1.free -- t2.free,
+  {
+    val intersection = t1.bound intersect (t2.bound)
+    if (!intersection.isEmpty) {
+      val commonVars = intersection.mkString(",")
+      throw new RuntimeException(s"Cannot abstract over term with bound variable. Variables in common: $commonVars. $Term 1: $t1. Term 2: $t2.")
+    }
+    t1.bound + t2.varName
+  }) {
+
   override def toString: String = Term.AbstOp + t2.toString + Term.AbstSep + t1.toString
 
-  override def free(): Set[String] = Term.safeFreeUnion(t1, t2) - t2.varName
-
-  override def bound(): Set[String] = Term.safeBoundUnion(t1, t2) + t2.varName
 }
 
 
