@@ -5,31 +5,25 @@ import org.scalatest._
 
 class TermTest extends FlatSpec with Matchers {
 
-  def varTermX = Var("X")
+  val varNameX = "X"
+  val varNameY = "Y"
 
-  def varTermY = Var("Y")
+  def varTermX = Var(varNameX)
+
+  def varTermY = Var(varNameY)
 
   "An abstraction over a variable" should " add a variable to its list of bound variables " +
     "provided that the variable is not already bound" in {
-    //Case: Abstracting over a variable
     val abstTerm = Abst(varTermX, varTermY)
-    abstTerm.boundVar(varTermY) should be(true)
-    abstTerm.boundVar(varTermX) should be(false)
-    varTermX.boundVar.isEmpty should be(true)
-    varTermY.boundVar.isEmpty should be(true)
+    abstTerm.free() should be(Set(varNameX))
+    abstTerm.bound() should be(Set(varNameY))
   }
 
   "An abstraction over an application " should " add a variable to its list of bound variables " +
     "provided that the variable is not already bound" in {
-
-    val appVar1 = Var("M")
-    val appVar2 = Var("N")
-    val appTerm = App(appVar1, appVar2)
-    appTerm.boundVar(appVar1) should be(false)
-    appTerm.boundVar(appVar2) should be(false)
-    appVar1.boundVar.isEmpty should be(true)
-    appVar2.boundVar.isEmpty should be(true)
-
+    val appTerm = App(varTermX, varTermY)
+    appTerm.free() should be(Set(varNameX, varNameY))
+    appTerm.bound() should be(Set.empty)
   }
 
   "An abstraction over an abstraction " should " add a variable to its list of bound variables " +
@@ -40,23 +34,26 @@ class TermTest extends FlatSpec with Matchers {
 
     //Check that the variable being abstracted over is added to the list of bound variables but the variable for the original term is not
     // Creating local function to test same conditions as postconditions of abstracting over an abstraction term
-    def yShouldBeBound = abstTermIn.boundVar(varTermY) should be(true)
-    def xShouldBeBound = abstTermIn.boundVar(varTermX) should be(false)
 
-    xShouldBeBound
-    yShouldBeBound
+
+    def yShouldBeBoundInOriginal = abstTermIn.bound() should be(Set(varNameY))
+
+    def xShouldBeFreeInOriginal = abstTermIn.free() should be(Set(varNameX))
+
+    yShouldBeBoundInOriginal
+    xShouldBeFreeInOriginal
 
 
     //Now abstract over the abstraction term
-    val abstVarOut = Var(varTermX + "1") //Guarantee this is a new variable
+    val abstVarNameOut = varNameX + "1" //Guarantee this is a new variable
+    val abstVarOut = Var(abstVarNameOut)
     val abstTermOut = Abst(abstTermIn, abstVarOut)
-    abstTermOut.boundVar(abstVarOut) should be(true)
-    abstTermOut.boundVar(varTermY) should be(false)
-    abstTermOut.boundVar(varTermX) should be(false)
+    abstTermOut.free() should be(Set(varNameX))
+    abstTermOut.bound() should be(Set(varNameY, abstVarNameOut))
 
     //Ensure original term is not affected
-    xShouldBeBound
-    yShouldBeBound
+    yShouldBeBoundInOriginal
+    xShouldBeFreeInOriginal
 
   }
 
