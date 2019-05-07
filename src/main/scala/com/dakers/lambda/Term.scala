@@ -5,7 +5,7 @@ package com.dakers.lambda
  *
  * Nederpelt, Rob. Type Theory and Formal Proof: An Introduction (Kindle Locations 645-646). Cambridge University Press. Kindle Edition.
  */
-abstract class Term(val free: Set[String], val bound: Set[String]) {
+sealed abstract class Term(val free: Set[String], val bound: Set[String]) {
   val varNames = free union bound
 }
 
