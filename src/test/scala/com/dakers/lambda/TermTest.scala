@@ -49,6 +49,14 @@ class TermTest extends FlatSpec with Matchers {
     intercept[RuntimeException](
       App(varTermY, varTermY)
     )
+
+    intercept[RuntimeException](
+      App(varTermX, App(varTermY, varTermY))
+    )
+
+    intercept[RuntimeException](
+      App(varTermX, App(varTermX, varTermY))
+    )
   }
 
   "An abstraction over a variable" should " add a variable to its list of bound variables " +
@@ -102,5 +110,9 @@ class TermTest extends FlatSpec with Matchers {
     xShouldBeFreeInOriginal
 
   }
+
+  "An abstraction over a bound variable" should "throw an exception" in {
+      intercept[RuntimeException](Abst(Abst(Var("Y"), Var("X")), Var("X")))
+    }
 
 }
