@@ -32,11 +32,6 @@ case class Var(val varName: String) extends Term(Set(varName), Set.empty) {
  * @param t2 N in an application MN.
  */
 case class App(t1: Term, t2: Term) extends Term({
-  val intersection = t1.free intersect (t2.free)
-  if (!intersection.isEmpty) {
-    val commonVars = intersection.mkString(",")
-    throw new RuntimeException(s"Cannot apply terms with a shared free variable. Variables in common: $commonVars. $Term 1: $t1. Term 2: $t2.")
-  }
   t1.free ++ t2.free
 },
   {
