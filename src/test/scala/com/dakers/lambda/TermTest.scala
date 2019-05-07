@@ -40,25 +40,6 @@ class TermTest extends FlatSpec with Matchers {
     }
   }
 
-  "An application of one term to another with variable names in common" should " throw an exception" in {
-
-
-    intercept[RuntimeException](
-      App(varTermX, varTermX)
-    )
-    intercept[RuntimeException](
-      App(varTermY, varTermY)
-    )
-
-    intercept[RuntimeException](
-      App(varTermX, App(varTermY, varTermY))
-    )
-
-    intercept[RuntimeException](
-      App(varTermX, App(varTermX, varTermY))
-    )
-  }
-
   "An abstraction over a variable" should " add a variable to its list of bound variables " +
     "provided that the variable is not already bound" in {
     val abstTerm = Abst(varTermX, varTermY)

@@ -132,4 +132,74 @@ class AlphaConvTest extends FlatSpec with Matchers {
     AlphaConv.Mxy(Abst(Abst(App(App(App(Var("x"), Var("u")), Var("z")), Var("w")), Var("x")), Var("z")), "z", "y") should be(Abst(Abst(App(App(App(Var("x"), Var("u")), Var("y")), Var("w")), Var("x")), Var("y")))
   }
 
+
+  /**
+   * Beginning of tests for substitution
+   */
+
+  //Case: term comprised of a single variable
+
+  "x[x:=N] " should " equal N" in {
+    val N = Var("N")
+    List("a", "b", "c", "d", "EEEER", "<!@#SDF").foreach(value => AlphaConv.subst(Var(value), N, value) should be(N))
+  }
+
+  "y[x:=N] " should " equal y" in {
+    val y = Var("y")
+    List("a", "b", "c", "d", "EEEER", "<!@#SDF").foreach(value => AlphaConv.subst(y, Var(value), value) should be(y))
+  }
+
+  //Case: Application of variables
+  "xy[x:=z]" should "equal zy" in {
+    AlphaConv.subst(App(Var("x"), Var("y")), Var("z"), "x") should be(App(Var("z"), Var("y")))
+  }
+
+  //Case: Abstraction over a single variable
+  s"($binder)x($sep)x[x:=y]" should " throw an exception" in {
+    intercept[RuntimeException](
+      AlphaConv.subst(Abst(Var("x"), Var("x")), Var("y"), "x")
+    )
+  }
+
+  s"($binder)x($sep)x[y:=x]" should " equal x" in {
+    val idFunc = Abst(Var("x"), Var("x"))
+    AlphaConv.subst(idFunc, Var("y"), "y") should be(idFunc)
+  }
+
+  //Case: application of application terms
+  s"xyxz[x:=a]" should " equal ayaz" in {
+    val xy = App(Var("x"), Var("y"))
+    val xz = App(Var("x"), Var("z"))
+    val xyxz = App(xy, xz)
+
+    val ay = App(Var("a"), Var("y"))
+    val az = App(Var("a"), Var("z"))
+    val ayaz = App(ay, az)
+
+    AlphaConv.subst(xyxz, Var("a"), "x") should be(ayaz)
+  }
+
+  s"xyxz[y:=a]" should " equal xaxz" in {
+    val xy = App(Var("x"), Var("y"))
+    val xz = App(Var("x"), Var("z"))
+    val xyxz = App(xy, xz)
+
+    val xa = App(Var("x"), Var("a"))
+    val xaxz = App(xa, xz)
+
+    AlphaConv.subst(xyxz, Var("a"), "y") should be(xaxz)
+  }
+
+  //Case: application of abstraction terms
+
+  s"($binder)x($sep)xy[y:=z]" should s"equal ($binder)x($sep)xz" in {
+    AlphaConv.subst(Abst(App(Var("x"), Var("y")), Var("x")), Var("z"), "y") should be(Abst(App(Var("x"), Var("z")), Var("x")))
+  }
+
+  s"($binder)x($sep)xy($binder)z($sep)zy[y:=w]" should s"equal ($binder)x($sep)xw($binder)z($sep)zw" in {
+    val xy = Abst(App(Var("x"), Var("y")), Var("x"))
+    val zy = Abst(App(Var("z"), Var("y")), Var("z"))
+    AlphaConv.subst(App(xy, zy), Var("w"), "y") should be(App(Abst(App(Var("x"), Var("w")), Var("x")), Abst(App(Var("z"), Var("w")), Var("z"))))
+  }
+
 }
