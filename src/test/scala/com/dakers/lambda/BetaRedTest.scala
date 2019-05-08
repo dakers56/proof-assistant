@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class BetaRedTest extends FlatSpec with Matchers {
+  class BetaRedTest extends FlatSpec with Matchers {
   val binder = Term.AbstOp
   val sep = Term.AbstSep
 
