@@ -10,8 +10,7 @@ sealed abstract class Term(val free: Set[String], val bound: Set[String]) {
 }
 
 object Term {
-  val AbstOp = "/|"
-  val AbstSep = "."
+
 
 }
 
@@ -60,7 +59,7 @@ case class Abst(t1: Term, t2: Var) extends Term(t1.free -- t2.free,
     t1.bound + t2.varName
   }) {
 
-  override def toString: String = Term.AbstOp + t2.toString + Term.AbstSep + t1.toString
+  override def toString: String = AbstOp + t2.toString + AbstSep + t1.toString
 
 }
 

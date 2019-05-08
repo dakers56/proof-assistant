@@ -5,8 +5,8 @@ import org.scalatest._
 
 class AlphaConvTest extends FlatSpec with Matchers {
 
-  val binder = Term.AbstOp
-  val sep = Term.AbstSep
+  val binder = AbstOp
+  val sep = AbstSep
 
   //Case: term is a variable
 

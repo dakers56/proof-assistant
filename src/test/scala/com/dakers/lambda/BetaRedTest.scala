@@ -3,8 +3,8 @@ package com.dakers.lambda
 import org.scalatest.{FlatSpec, Matchers}
 
   class BetaRedTest extends FlatSpec with Matchers {
-  val binder = Term.AbstOp
-  val sep = Term.AbstSep
+  val binder = AbstOp
+  val sep = AbstSep
 
   //Case: Variable applied in redex
   s"$binder x $sep xy" should " 1-step beta reduce to y" in {
