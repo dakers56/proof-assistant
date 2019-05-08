@@ -43,7 +43,7 @@ case class App(t1: Term, t2: Term) extends Term({
     t1.bound ++ t2.bound
   }
 ) {
-  override def toString: String = t1.toString + t2.toString
+  override def toString: String = "(" + t1.toString + t2.toString + ")"
 }
 
 /**

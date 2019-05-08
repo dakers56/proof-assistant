@@ -46,4 +46,39 @@ class BetaRedTest extends FlatSpec with Matchers {
     BetaRed.red1s(App(Abst(App(Var("x"), Var("y")), Var("x")), Abst(App(Var("z"), Var("u")), Var("z"))), "x") should be(App(Abst(App(Var("z"), Var("u")), Var("z")), Var("y")))
   }
 
+
+  /**
+   * Testing redex recognition
+   */
+
+  s"($binder)x($sep)x" should " no redexes" in {
+    val redex = Abst(Var("x"), Var("x"))
+    BetaRed.redexes(redex, List()) should be(List())
+  }
+
+  s"x" should " have no redexes" in {
+    BetaRed.redexes(Var("x"), List()) should be(List())
+  }
+
+  s"y($binder)x($sep)x" should " have exactlyno redexes" in {
+    val redex = Abst(Var("x"), Var("x"))
+    BetaRed.redexes(App(Var("y"), redex)
+      , List()) should be(List())
+  }
+
+  s"($binder)y($sep)y($binder)x($sep)x" should " have exactly one redex: ($binder)x($sep)x" in {
+    val redex1 = Abst(Var("x"), Var("x"))
+    val redex2 = Abst(Var("x"), Var("y"))
+    BetaRed.redexes(App(redex1, redex2)
+      , List()) should be(List(App(redex1, redex2)))
+  }
+
+  s"(($binder)x($sep)(($binder)y($sep)yx)z)v" should " have two redexes: (($binder)x($sep)(($binder)y($sep)yx)z)v and " in {
+    val y_yx = Abst(App(Var("y"), Var("x")), Var("y"))
+    val y_yx_z = App(y_yx, Var("z"))
+    val y_yx_z_v = App(y_yx_z, Var("z"))
+    BetaRed.redexes(App(Abst(y_yx_z_v, Var("x")), Var("v"))
+      , List()) should be(List(App(Abst(y_yx_z_v, Var("x")), Var("v")), y_yx_z))
+  }
+
 }
