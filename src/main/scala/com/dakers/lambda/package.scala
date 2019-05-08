@@ -9,7 +9,7 @@ package object lambda {
   val AppRegex = raw"(.{2,})".r
 
 
-   def lam(s: String): Term = {
+  def lam(s: String): Term = {
     if (s.length == 1) return Var(s)
     if (s.startsWith(AbstOp)) {
       val v = splitAbst(s)
@@ -17,11 +17,19 @@ package object lambda {
     }
     else {
       val v = splitApp(s)
-      if(v._2.length == 1) {
+      if (v._2.length == 1) {
         App(Var(v._1), lam(v._2))
       }
       else {
-        App(App(Var(v._1), Var(v._2.substring(0,1))), lam(v._2.substring(1)))
+        val x = v._1
+        val y = v._2.charAt(0).toString
+        val xy = App(Var(x), Var(y))
+        var xyz = xy
+
+        for (i <- 1 until v._2.length) {
+          xyz = App(xyz, Var(v._2.charAt(i).toString))
+        }
+        xyz
       }
     }
   }
