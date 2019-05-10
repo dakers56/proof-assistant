@@ -1,52 +1,45 @@
 package com.dakers
 
+import scala.collection.mutable.ListBuffer
+
 package object lambda {
 
-  val AbstOp = raw"/|"
+  val AbstOp = "/|"
   val AbstSep = "."
-  val AbstRegex = raw"/\|(.)\.(.*)".r
-  val VarRegex = "(.)".r
-  val AppLRegex = raw"\((\(.*\))(.)\)".r
-  val AppRRegex = raw"\((.)(\(.*\))\)".r
-  val App0Regex = raw"\((.)(.)\)".r
-  //  val AppAbstR = raw"(.*)(?=\/\|)(.*)(?=\))".r
-  val AppAbstR = raw"\((.*)/\|(.)\.(.*)\)".r
-  val AppApp = raw"\((\(.*\))(\(.*\))\)".r
-  val AppAbstAbst = raw"\((\/\|.*)(\/\|.*)\)".r
 
-  def lam(s: String): Term = {
+  var context = scala.collection.mutable.Map[String, Term]()
+  var varNames = ListBuffer[String]()
 
-    s match {
-      case AbstRegex(x, t) => {
-        Abst(lam(t), Var(x))
-      }
-      case AppApp(l, r) => {
-        App(lam(l), lam(r))
-      }
-      case AppAbstAbst(l,r) => {
-        App(lam(l), lam(r))
-      }
-
-      case AppLRegex(l, r) => {
-        App(lam(l), lam(r))
-      }
-      case AppRRegex(l, r) => {
-        App(lam(l), lam(r))
-      }
-      case App0Regex(l, r) => {
-        App(Var(l), Var(r))
-      }
-      case VarRegex(x) => {
-        Var(x)
-      }
-      case AppAbstR(l, x, r) => {
-        App(lam(l), Abst(lam(r), Var(x)))
-      }
-      case _ => {
-        throw new RuntimeException(s"$s was not a well formed lambda expression. Make sure that it has () around all application terms.")
-      }
+  implicit class DeclareVariable(val v: String) {
+    def decl(): Var = {
+      val newVar = Var(v);
+      context += (v -> newVar)
+      if (varNames.contains(v)) throw new RuntimeException(s"Variable name $v was already used.")
+      varNames += v
+      newVar
     }
   }
+
+  def +~(t: Term): Unit = {
+    context += (t.toString -> t)
+  }
+
+  def -~(t: Term): Unit = {
+    context -= t.toString
+  }
+
+
+  implicit class GetTerm(val k: String) {
+    def ? = context.get(k).getOrElse(throw new RuntimeException(s"Term $k was not available in current context."))
+  }
+
+
+  implicit class ApplicationTerm(val t1: Term) {
+    def *(t2: Term) = if (context.contains(t1.toString) && context.contains(t2.toString)) App(t1, t2) else throw new RuntimeException(s"One of  $t1, $t2 was not yet declared")
+  }
+
+
+  def /|(s: String, t: Term): Abst = if (varNames.contains(s.toString) && context.contains(t.toString)) Abst(t, Var(s)) else throw new RuntimeException(s"One of  $s, $t was not yet declared")
 
 
 }

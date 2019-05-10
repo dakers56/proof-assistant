@@ -4,67 +4,179 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class PackageTest extends FlatSpec with Matchers {
 
-    "x" should "deserialize to Var(x)" in {
-      lam("x") should be(Var("x"))
-    }
 
-    s"$AbstOp x$AbstSep x" should "deserialize to Abst(Var(x),Var(x))" in {
-      lam(s"/|x.x") should be(Abst(Var("x"), Var("x")))
-    }
-
-    s"$AbstOp x$AbstSep xy" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-      lam(s"/|x.x") should be(Abst(Var("x"), Var("x")))
-    }
-
-    s"$AbstOp x $AbstSep $AbstOp y $AbstSep xy" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-      lam(s"/|x./|y.(xy)") should be(Abst(Abst(App(Var("x"), Var("y")), Var("y")), Var("x")))
-    }
-
-    s"$AbstOp z $AbstSep $AbstOp x $AbstSep $AbstOp y $AbstSep xyz" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-      lam(s"/|z./|x./|y.((xy)z)") should be(Abst(Abst(Abst(App(App(Var("x"), Var("y")), Var("z")), Var("y")), Var("x")), Var("z")))
-    }
-
-    s"$AbstOp u $AbstSep $AbstOp z $AbstSep $AbstOp x $AbstSep $AbstOp y $AbstSep xyz" should "deserialize to Abst(Abst(Abst(Abst(App(App(App(Var(\"x\"), Var(\"y\")), Var(\"z\")), Var(\"u\")), Var(\"y\")), Var(\"x\")), Var(\"z\")), Var(\"u\"))" in {
-      lam(s"/|u./|z./|x./|y.(((xy)z)u)") should be(Abst(Abst(Abst(Abst(App(App(App(Var("x"), Var("y")), Var("z")), Var("u")), Var("y")), Var("x")), Var("z")), Var("u")))
-    }
-
-    s"$AbstOp w $AbstOp u $AbstSep $AbstOp z $AbstSep $AbstOp x $AbstSep $AbstOp y $AbstSep xyzu $AbstOp t $AbstSep t" should "deserialize to Abst(Abst(Abst(Abst(App(App(App(Var(\"x\"), Var(\"y\")), Var(\"z\")), Var(\"u\")), Var(\"y\")), Var(\"x\")), Var(\"z\")), Var(\"u\"))" in {
-      lam(s"/|w./|u./|z./|x./|y.((((xy)z)u)w)") should be(
-        Abst(Abst(Abst(Abst(Abst(App(App(App(App(Var("x"), Var("y")), Var("z")), Var("u")), Var("w")), Var("y")), Var("x")), Var("z")), Var("u")), Var("w")))
-    }
-
-    s"$AbstOp w $AbstOp u $AbstSep $AbstOp z $AbstSep $AbstOp x $AbstSep $AbstOp y $AbstSep xyzu" should "deserialize to Abst(Abst(Abst(Abst(App(App(App(Var(\"x\"), Var(\"y\")), Var(\"z\")), Var(\"u\")), Var(\"y\")), Var(\"x\")), Var(\"z\")), Var(\"u\"))" in {
-      val xyzuw = App(App(App(App(Var("x"), Var("y")),Var("z")),Var("u")),Var("w"))
-      val xyzuw_t = App(xyzuw,Abst(Var("t"), Var("t")))
-
-      lam(s"/|w./|u./|z./|x./|y.(((((xy)z)u)w)/|t.t)") should be(Abst(Abst(Abst(Abst(Abst(xyzuw_t,Var("y")),Var("x")),Var("z")),Var("u")),Var("w")))
-    }
-
-    s"$AbstOp x $AbstSep $AbstOp y $AbstSep x($AbstOp z $AbstSep y)" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-      val z_y = Abst(Var("y"), Var("z"))
-      val xz_y = App(Var("x"), z_y)
-      lam(s"/|x./|y.(x/|z.y)") should be(Abst(Abst(xz_y,Var("y")),Var("x")))
-    }
-
-    s"$AbstOp x $AbstSep $AbstOp y $AbstSep  ( x($AbstOp z $AbstSep y) $AbstOp a $AbstSep a)" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-      val z_y = Abst(Var("y"), Var("z"))
-      val xz_y = App(Var("x"), z_y)
-      lam(s"/|x./|y.((x/|z.y)/|a.a)") should be(Abst(Abst(App(xz_y, Abst(Var("a"), Var("a"))),Var("y")),Var("x")))
-    }
-
-  s"$AbstOp x $AbstSep $AbstOp y $AbstSep  ( x($AbstOp z $AbstSep ()) $AbstOp a $AbstSep a)" should "deserialize to Abst(App(Var(x), Var(y)),Var(x))" in {
-    lam(s"(/|b.b/|a.a)") should be(App(Abst(Var("b"), Var("b")), Abst(Var("a"), Var("a"))))
+  "x.decl()" should "create Var(x), add Var(x) to the context, and x to the list of variable names" in {
+    "x".decl()
+    context should be(scala.collection.mutable.Map(("x" -> Var("x"))))
+    varNames should be(scala.collection.mutable.ListBuffer("x"))
+    context.clear()
+    varNames.clear()
   }
 
-    s"An abstraction of multiple variables over an application including an application of an abstraction to another abstraction" should "deserialize properly" in {
-      val aa_bb = App(Abst(Var("b"), Var("b")), Abst(Var("a"), Var("a")))
-      lam(s"/|x./|y.((x/|z.y)(/|b.b/|a.a))") should be(Abst(Abst(App(App(Var("x"), Abst(Var("y"), Var("z"))), aa_bb), Var("y")), Var("x")))
-    }
+  "x.decl(), then y.decl()" should "create Var(x), add Var(x) to the context, and x to the list of variable names, and similarly for y" in {
+    "x".decl()
+    "y".decl()
+    context should be(scala.collection.mutable.Map(("x" -> Var("x")), ("y" -> Var("y"))))
+    varNames should be(scala.collection.mutable.ListBuffer("x", "y"))
 
-  s"An abstraction of multiple variables over an application including an application of an abstraction to another abstraction on the left" should "deserialize properly" in {
-    val aa_bb = App(Abst(Var("b"), Var("b")), Abst(Var("a"), Var("a")))
-    lam(s"/|x./|y.((/|b.b/|a.a)(x/|z.y))") should be(Abst(Abst(App(aa_bb, App(Var("x"), Abst(Var("y"), Var("z")))), Var("y")), Var("x")))
+    context.clear()
+    varNames.clear()
   }
 
+  "If x is already in the context, x.decl()" should " throw an exception" in {
+    intercept[RuntimeException]({
+      "x".decl();
+      "x".decl()
+    })
+    context.clear()
+    varNames.clear()
+  }
+
+  "The ? operator " should " be able to get a term which is already in the context" in {
+    "x".decl()
+    "x".? should be(Var("x"))
+    "y".decl()
+    "y".? should be(Var("y"))
+
+    val appTerm = "x".? * "y".?
+    context += (appTerm.toString -> appTerm)
+    appTerm.toString.? should be(appTerm)
+    context -= appTerm.toString
+
+    val abstTerm = /|("x", "y".?)
+    context += (abstTerm.toString -> abstTerm)
+    abstTerm.toString.? should be(abstTerm)
+
+    context.clear()
+    varNames.clear()
+  }
+
+  "The ? operator " should " throw an exception when a term is not yet in the context" in {
+
+    context.clear()
+    varNames.clear()
+
+    intercept[RuntimeException]({
+      "x".?
+    })
+
+    intercept[RuntimeException]({
+      "x".decl();
+      "y".decl();
+      (Var("x") * Var("y")).toString.?
+    })
+    context.clear()
+    varNames.clear()
+
+    intercept[RuntimeException]({
+      "x".decl();
+      "y".decl();
+      /|("x", "y".?).toString.?
+    })
+    context.clear()
+    varNames.clear()
+
+
+  }
+
+  "+~ " should " add a term to the context" in {
+    context.clear()
+    varNames.clear()
+    +~("x".decl())
+    context should be(scala.collection.mutable.Map(("x" -> Var("x"))))
+    +~("y".decl())
+    context should be(scala.collection.mutable.Map(("x" -> Var("x")), ("y" -> Var("y"))))
+    context.clear()
+    varNames.clear()
+
+    +~("x".decl() * "y".decl())
+    val appTerm = App(Var("x"), Var("y"))
+    context should be(scala.collection.mutable.Map(("x" -> Var("x")), ("y" -> Var("y")), (appTerm.toString -> appTerm)))
+    context.clear()
+    varNames.clear()
+
+    "x".decl()
+    val abstTerm = /|("x", "x".?)
+    +~(abstTerm)
+    context should be(scala.collection.mutable.Map(("x" -> Var("x")), (abstTerm.toString -> abstTerm)))
+    context.clear()
+    varNames.clear()
+
+  }
+
+  "-~ " should " remove a term from the context" in {
+    context.clear()
+    varNames.clear()
+
+    +~("x".decl())
+    +~("y".decl())
+
+    -~(Var("y"))
+    context should be(scala.collection.mutable.Map(("x" -> Var("x"))))
+
+    -~(Var("x"))
+    context should be(scala.collection.mutable.Map())
+
+    context.clear()
+    varNames.clear()
+
+    val appTerm = "x".decl() * "y".decl()
+    +~(appTerm)
+    -~(appTerm)
+    context should not contain (appTerm)
+
+    val abstTerm = /|("x", "x".?)
+    +~(abstTerm)
+    -~(abstTerm)
+    context should not contain (abstTerm)
+
+    context.clear()
+    varNames.clear()
+
+  }
+
+  "An application term " should "be created if its constituents are declared." in {
+    "x".decl() * "y".decl() should be(App(Var("x"), Var("y")))
+    context.clear()
+    varNames.clear()
+  }
+
+  "An application term " should "not be created if its constituents are not declared." in {
+
+    intercept[RuntimeException](Var("x") * Var("y"))
+
+    intercept[RuntimeException]("x".decl() * Var("y"))
+    context.clear()
+    varNames.clear()
+
+    intercept[RuntimeException](Var("x") * "y".decl())
+    context.clear()
+    varNames.clear()
+
+  }
+
+  "An abstraction term " should "be created if its constituents are declared." in {
+    "x".decl()
+    /|("x", "y".decl()) should be(Abst(Var("y"), Var("x")))
+    context.clear()
+    varNames.clear()
+  }
+
+  "An abstraction term " should "not be created if its constituents are not declared." in {
+
+    intercept[RuntimeException](/|("x", Var("y")))
+
+    intercept[RuntimeException]({
+      "x".decl();
+      /|("x", Var("y"))
+    })
+    context.clear()
+    varNames.clear()
+
+    intercept[RuntimeException](/|("x", "y".decl()))
+    context.clear()
+    varNames.clear()
+
+  }
 
 }
