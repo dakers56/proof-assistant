@@ -9,9 +9,10 @@ package object lambda {
   val AppLRegex = raw"\((\(.*\))(.)\)".r
   val AppRRegex = raw"\((.)(\(.*\))\)".r
   val App0Regex = raw"\((.)(.)\)".r
-//  val AppAbstR = raw"(.*)(?=\/\|)(.*)(?=\))".r
+  //  val AppAbstR = raw"(.*)(?=\/\|)(.*)(?=\))".r
   val AppAbstR = raw"\((.*)/\|(.)\.(.*)\)".r
-
+  val AppApp = raw"\((\(.*\))(\(.*\))\)".r
+  val AppAbstAbst = raw"\((\/\|.*)(\/\|.*)\)".r
 
   def lam(s: String): Term = {
 
@@ -19,6 +20,13 @@ package object lambda {
       case AbstRegex(x, t) => {
         Abst(lam(t), Var(x))
       }
+      case AppApp(l, r) => {
+        App(lam(l), lam(r))
+      }
+      case AppAbstAbst(l,r) => {
+        App(lam(l), lam(r))
+      }
+
       case AppLRegex(l, r) => {
         App(lam(l), lam(r))
       }
@@ -31,7 +39,7 @@ package object lambda {
       case VarRegex(x) => {
         Var(x)
       }
-      case AppAbstR(l,x, r) => {
+      case AppAbstR(l, x, r) => {
         App(lam(l), Abst(lam(r), Var(x)))
       }
       case _ => {
