@@ -16,8 +16,8 @@ object BetaRed {
   def redexes(term: Term, rdxs: List[App]): List[App] = {
     term match {
       case Var(_) => rdxs
-      case App(Abst(t1, t2), t3) => term.asInstanceOf[App] :: redexes(t1, rdxs) ++ redexes(t3, rdxs)
-      case App(t1, t2) => redexes(t1, rdxs) ++ redexes(t2, rdxs)
+      case App(Abst(t1, t2), t3) => term.asInstanceOf[App] :: redexes(t1, rdxs) ::: redexes(t3, rdxs)
+      case App(t1, t2) => redexes(t1, rdxs) ::: redexes(t2, rdxs)
       case Abst(t1, t2) => redexes(t1, rdxs)
     }
   }

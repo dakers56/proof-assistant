@@ -35,11 +35,19 @@ package object lambda {
 
 
   implicit class ApplicationTerm(val t1: Term) {
-    def *(t2: Term) = if (context.contains(t1.toString) && context.contains(t2.toString)) App(t1, t2) else throw new RuntimeException(s"One of  $t1, $t2 was not yet declared")
+    def *(t2: Term) = if (context.contains(t1.toString) && context.contains(t2.toString)) {
+      val term = App(t1, t2)
+      context += (term.toString -> term)
+      term
+    } else throw new RuntimeException(s"One of  $t1, $t2 was not yet declared")
   }
 
 
-  def /|(s: String, t: Term): Abst = if (varNames.contains(s.toString) && context.contains(t.toString)) Abst(t, Var(s)) else throw new RuntimeException(s"One of  $s, $t was not yet declared")
+  def /|(s: String, t: Term): Abst = if (varNames.contains(s.toString) && context.contains(t.toString)) {
+    val term = Abst(t, Var(s))
+    context += (term.toString -> term)
+    term
+  } else throw new RuntimeException(s"One of  $s, $t was not yet declared")
 
 
 }
