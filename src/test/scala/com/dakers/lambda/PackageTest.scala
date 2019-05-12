@@ -62,14 +62,12 @@ class PackageTest extends FlatSpec with Matchers {
 
     intercept[RuntimeException]({
       "x".decl();
-      "y".decl();
       (Var("x") * Var("y")).toString.?
     })
     context.clear()
     varNames.clear()
 
     intercept[RuntimeException]({
-      "x".decl();
       "y".decl();
       /|("x", "y".?).toString.?
     })

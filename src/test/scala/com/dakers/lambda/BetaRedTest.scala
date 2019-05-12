@@ -154,7 +154,7 @@ class BetaRedTest extends FlatSpec with Matchers {
     "Abstracting over a term should " should " add no redexes" in {
       clear()
       "x".decl()
-      var t: Term = /|("x", "x".?) * "y".decl()
+      var t: UTTerm = /|("x", "x".?) * "y".decl()
       val expected = List[App](t.asInstanceOf[App])
       for (i <- Range(1, 10)) {
         val xn = "x" + i.toString

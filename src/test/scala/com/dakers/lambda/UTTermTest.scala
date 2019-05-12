@@ -3,7 +3,7 @@ package com.dakers.lambda
 import org.scalatest._
 
 
-class TermTest extends FlatSpec with Matchers {
+class UTTermTest extends FlatSpec with Matchers {
 
   val varNameX = "X"
   val varNameY = "Y"
