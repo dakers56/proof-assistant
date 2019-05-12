@@ -1,6 +1,5 @@
 package com.dakers.lambda
 
-class DerivationContext {
-  val varNames = scala.collection.mutable.Set()
-  val statements = scala.collection.mutable.ListBuffer()
-}
+import scala.collection.mutable.ListBuffer
+
+class DerivationContext(val varNames: Set[String] = Set(), val statements: ListBuffer[STTerm] = scala.collection.mutable.ListBuffer())
