@@ -64,4 +64,3 @@ case class Abst(t1: UTTerm, t2: Var) extends UTTerm(t1.free -- t2.free,
 }
 
 
-
