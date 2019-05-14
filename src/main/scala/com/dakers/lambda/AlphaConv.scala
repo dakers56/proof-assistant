@@ -13,7 +13,7 @@ object AlphaConv {
    * @return If alpha convertible, term with x replaced by y. Otherwise an exception is thrown.
    * @throws RuntimeException If the new variable already exists in the term.
    */
-  def Mxy(from: UTTerm, x: String, y: String): UTTerm = {
+  def Mxy(from: Term, x: String, y: String): Term = {
     if (!isInTerm(from, x)) {
       println(s"Variable $x was not in term $from")
       return from
@@ -31,7 +31,7 @@ object AlphaConv {
    * @param y    Name of variable
    * @return True if y is a candidate for renaming ANY variable in term
    */
-  def isInTerm(term: UTTerm, y: String): Boolean = {
+  def isInTerm(term: Term, y: String): Boolean = {
     return term.varNames(y)
   }
 
@@ -47,8 +47,8 @@ object AlphaConv {
    * @param x
    * @return
    */
-  def subst(M: UTTerm, N: UTTerm, x: String): UTTerm = {
-    if(M.bound(x)) {
+  def subst(M: Term, N: Term, x: String): Term = {
+    if (M.bound(x)) {
       throw new RuntimeException(s"$x was already a bound variable in $M")
     }
     var intersection = M.free intersect (N.free)

@@ -5,8 +5,8 @@ import com.dakers.lambda.TermUtils.checkVars
 
 trait UTTermNotation {
 
-  implicit class AppTermTerm(val t1: UTTerm) {
-    def *(t2: UTTerm) = {
+  implicit class AppTermTerm[T <: Term](val t1: T) {
+    def *(t2: UTTerm): App = {
       checkVars(t1, t2)
       App(t1, t2)
     }

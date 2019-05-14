@@ -7,7 +7,6 @@ package com.dakers.lambda
  * Nederpelt, Rob. Type Theory and Formal Proof: An Introduction (Kindle Locations 645-646). Cambridge University Press. Kindle Edition.
  */
 sealed abstract class UTTerm(override val free: Set[String], override val bound: Set[String]) extends Term(free, bound){
-  val varNames = free union bound
 
   def ::[T <: SimpleType](sType: T) = STTerm(this, sType)
 
@@ -30,7 +29,7 @@ case class Var(val varName: String) extends UTTerm(Set(varName), Set.empty) {
  * @param t1 M in an application MN.
  * @param t2 N in an application MN.
  */
-case class App(t1: UTTerm, t2: UTTerm) extends UTTerm({
+case class App(t1: Term, t2: Term) extends UTTerm({
   t1.free ++ t2.free
 },
   {
@@ -51,7 +50,7 @@ case class App(t1: UTTerm, t2: UTTerm) extends UTTerm({
  * @param t1 Term to abstract over.
  * @param t2 Variable to bind.
  */
-case class Abst(t1: UTTerm, t2: Var) extends UTTerm(t1.free -- t2.free,
+case class Abst(t1: Term, t2: Var) extends UTTerm(t1.free -- t2.free,
   {
     if (t1.bound(t2.varName)) {
       throw new RuntimeException(s"Cannot abstract over bound variable. Term 1: $t1. Variable to abstract over: $t2.")
