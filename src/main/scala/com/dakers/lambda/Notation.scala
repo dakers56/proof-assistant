@@ -10,6 +10,8 @@ trait Notation {
       checkVars(t1, t2)
       App(t1, t2)
     }
+
+    def *(t2: String): App = t1 * Var(t2)
   }
 
   implicit class AppStringTerm(val s1: String) {
@@ -30,6 +32,8 @@ trait Notation {
   def /|(s: String, t: UTTerm): Abst = if (t.bound.contains(s.toString)) {
     throw new RuntimeException(s"Cannot abstract over variable $s already bound in term $t")
   } else Abst(t, Var(s))
+
+  def /|(s: String, t: String): Abst = /|(s, Var(t))
 
 }
 
