@@ -3,7 +3,7 @@ package com.dakers.lambda
 import com.dakers.lambda.TermUtils.checkVars
 
 
-trait Notation {
+trait UTTermNotation {
 
   implicit class AppTermTerm(val t1: UTTerm) {
     def *(t2: UTTerm) = {
@@ -37,7 +37,7 @@ trait Notation {
 
 }
 
-object Notation {
+object UTTermNotation {
   def strToVar(s: String): Var = {
     Var(s)
   }

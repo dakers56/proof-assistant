@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable.Set
 
-class UntypedContextTest extends FlatSpec with Matchers with Notation {
+class UntypedContextTest extends FlatSpec with Matchers with UTTermNotation {
 
   "An empty context" should "have no variables" in {
     UntypedContext(Set[String]()).varNames should be(empty)

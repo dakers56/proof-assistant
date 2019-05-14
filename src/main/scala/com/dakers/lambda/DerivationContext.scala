@@ -1,11 +1,11 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.Notation.strToVar
+import com.dakers.lambda.UTTermNotation.strToVar
 
 import scala.collection.mutable.Set
 
 
-abstract class DerivationContext(val varNames: Set[String] = Set()) extends Notation {
+abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTermNotation {
 
   private def newVars(t: UTTerm): scala.collection.Set[String] = {
     val tVars = t.bound union t.free

@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable.Range
 
-class BetaRedTest extends FlatSpec with Matchers with Notation {
+class BetaRedTest extends FlatSpec with Matchers with UTTermNotation {
   val binder = AbstOp
   val sep = AbstSep
 
