@@ -7,7 +7,7 @@ case class VarType(val v: String) extends SimpleType {
 }
 
 
-case class ArrType[T <: SimpleType](val s: SimpleType, val t: T) extends SimpleType {
+case class ArrType[T <: SimpleType](val s: T, val t: T) extends SimpleType {
   val ArrStr = "->"
 
   override def toString: String = s"$s$ArrStr$t"
