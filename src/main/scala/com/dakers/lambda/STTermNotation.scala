@@ -11,14 +11,13 @@ trait STTermNotation {
   }
 
   implicit class ArrowConv(val t1: SimpleType) {
-    def ->(t2: SimpleType): ArrType[SimpleType] = ArrType(t1, t2)
+    def ->:(t2: SimpleType): ArrType = ArrType(t2, t1)
   }
 
   implicit class ArrConvLeft(val s: String) {
-    def vt : VarType = VarType(s)
+    def vt: VarType = VarType(s)
   }
 
   implicit def strConvVar(s: String): VarType = VarType(s)
-
 
 }

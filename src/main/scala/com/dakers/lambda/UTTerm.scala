@@ -8,8 +8,6 @@ package com.dakers.lambda
  */
 sealed abstract class UTTerm(override val free: Set[String], override val bound: Set[String]) extends Term(free, bound){
 
-  def ::[T <: SimpleType](sType: T) = STTerm(this, sType)
-
 }
 
 
