@@ -7,7 +7,7 @@ import scala.collection.mutable.Set
 
 abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTermNotation {
 
-  private def newVars(t: UTTerm): scala.collection.Set[String] = {
+  private def newVars(t: Term): scala.collection.Set[String] = {
     val tVars = t.bound union t.free
     val intersect = tVars intersect varNames
     if (!intersect.isEmpty) {
@@ -16,7 +16,7 @@ abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTe
     tVars
   }
 
-  def +(t: UTTerm): DerivationContext = {
+  def +(t: Term): DerivationContext = {
     varNames ++= newVars(t)
     this
   }
@@ -25,7 +25,7 @@ abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTe
     this + strToVar(s)
   }
 
-  def -(t: UTTerm): DerivationContext = {
+  def -(t: Term): DerivationContext = {
     varNames --= t.bound union t.free
     this
   }
