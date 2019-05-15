@@ -1,47 +1,33 @@
 package com.dakers.lambda
 
-import scala.collection.mutable.{ListBuffer, Set}
 
+abstract class DerivationContext[T](private var _context: List[T] = List()) {
 
-abstract class DerivationContext[T <: Term](val varNames: Set[String] = Set(), val statement: ListBuffer[T] = ListBuffer()) extends UTTermNotation {
+  def context(): List[T] = _context
 
-  private def newVars(t: Term): scala.collection.Set[String] = {
-    val tVars = t.bound union t.free
-    val intersect = tVars intersect varNames
-    if (!intersect.isEmpty) {
-      throw new RuntimeException(s"Term $t contained variable(s) already used in this context: $intersect")
-    }
-    tVars
+  def varCount(v: String): Int
+
+  def add(t: T): Unit = _context.contains(t) match {
+    case false => _context = t :: _context
   }
 
-  def +(t: T): DerivationContext[T] = {
-    varNames ++= newVars(t)
-    statement += t
-    this
-  }
-
-  def +(s: String): DerivationContext[T] = {
-    val newVar = Var(s)
-    varNames ++= newVars(newVar)
-    statement += newVar.asInstanceOf[T]
-    this
-  }
-
-  def -(t: T): DerivationContext[T] = {
-    varNames --= t.bound union t.free
-    statement.filter(u => u != t)
-    this
-  }
-
-  def -(s: String): DerivationContext[T] = {
-    varNames -= s
-    statement.filter(t => t != Var(s))
-    this
-  }
+  def del(t: T): Unit = _context.filter(u => u != t)
 
 }
 
-case class SimplyTypedContext(override val varNames: Set[String] = Set(), override val statement: ListBuffer[STTerm] = new ListBuffer[STTerm]()) extends DerivationContext(varNames, statement)
+class UntypedDerivationContext extends DerivationContext[UTTerm] {
+  override def varCount(v: String): Int = super.context().map(t => t.varNames.contains(v)).count(u => u)
+}
 
-case class UntypedContext(override val varNames: Set[String] = Set(), override val statement: ListBuffer[UTTerm] = new ListBuffer[UTTerm]()) extends DerivationContext(varNames, statement)
+object UntypedDerivationContext {
+  def apply(): UntypedDerivationContext = new UntypedDerivationContext()
+}
 
+
+class SimplyTypedDerivationContext extends DerivationContext[STTerm] {
+  override def varCount(v: String): Int = super.context().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
+}
+
+object SimplyTypedDerivationContext {
+  def apply(): SimplyTypedDerivationContext = new SimplyTypedDerivationContext()
+}
