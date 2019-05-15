@@ -38,4 +38,27 @@ class DerivationContextTest extends FlatSpec with Matchers with STTermNotation w
     context.statement should be(ListBuffer(Var(varName)))
   }
 
+  //Adding an element to a non-empty context
+  "An untyped context with one variable and one statement" should " have two variable names and two statements in it after a statement is added" in {
+    val context: DerivationContext[UTTerm] = UntypedContext()
+    val varName1 = "x"
+    context + varName1
+
+    val varName2 = "y"
+    context + varName2
+    context.varNames should be(Set(varName1, varName2))
+    context.statement should be(ListBuffer(Var(varName1), Var(varName2)))
+  }
+
+  "A typed context with one variable and one statement" should " have two variable names and two statements in it after a statement is added" in {
+    val context = SimplyTypedContext()
+    val varName1 = "x"
+    context + varName1
+
+    val varName2 = "y"
+    context + varName2
+    context.varNames should be(Set(varName1, varName2))
+    context.statement should be(ListBuffer(Var(varName1), Var(varName2)))
+  }
+
 }
