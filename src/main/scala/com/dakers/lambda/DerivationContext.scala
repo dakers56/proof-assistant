@@ -1,11 +1,9 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.UTTermNotation.strToVar
-
 import scala.collection.mutable.Set
 
 
-abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTermNotation {
+abstract class DerivationContext[T <: Term](val varNames: Set[String] = Set()) extends UTTermNotation {
 
   private def newVars(t: Term): scala.collection.Set[String] = {
     val tVars = t.bound union t.free
@@ -16,22 +14,24 @@ abstract class DerivationContext(val varNames: Set[String] = Set()) extends UTTe
     tVars
   }
 
-  def +(t: Term): DerivationContext = {
+  def +(t: T): DerivationContext[T] = {
     varNames ++= newVars(t)
     this
   }
 
-  def +(s: String): DerivationContext = {
-    this + strToVar(s)
+  def +(s: String): DerivationContext[T] = {
+    varNames ++= newVars(Var(s))
+    this
   }
 
-  def -(t: Term): DerivationContext = {
+  def -(t: T): DerivationContext[T] = {
     varNames --= t.bound union t.free
     this
   }
 
-  def -(s: String): DerivationContext = {
-    this - strToVar(s)
+  def -(s: String): DerivationContext[T] = {
+    varNames -= s
+    this
   }
 
 }
