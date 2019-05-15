@@ -1,6 +1,6 @@
 package com.dakers.lambda
 
-case class STTerm[T <: SimpleType](val term: UTTerm, val sType: T) {
+case class STTerm(val term: UTTerm, val sType: SimpleType) extends Term(term.free, term.bound) {
   override def toString: String = term + STTerm.TypeSep + sType
 }
 

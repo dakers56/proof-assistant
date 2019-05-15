@@ -1,9 +1,9 @@
 package com.dakers.lambda
 
-import scala.collection.mutable.Set
+import scala.collection.mutable.{ListBuffer, Set}
 
 
-abstract class DerivationContext[T <: Term](val varNames: Set[String] = Set()) extends UTTermNotation {
+abstract class DerivationContext[T <: Term](val varNames: Set[String] = Set(), val statement: ListBuffer[T] = ListBuffer()) extends UTTermNotation {
 
   private def newVars(t: Term): scala.collection.Set[String] = {
     val tVars = t.bound union t.free
@@ -16,26 +16,32 @@ abstract class DerivationContext[T <: Term](val varNames: Set[String] = Set()) e
 
   def +(t: T): DerivationContext[T] = {
     varNames ++= newVars(t)
+    statement += t
     this
   }
 
   def +(s: String): DerivationContext[T] = {
-    varNames ++= newVars(Var(s))
+    val newVar = Var(s)
+    varNames ++= newVars(newVar)
+    statement += newVar.asInstanceOf[T]
     this
   }
 
   def -(t: T): DerivationContext[T] = {
     varNames --= t.bound union t.free
+    statement.filter(u => u != t)
     this
   }
 
   def -(s: String): DerivationContext[T] = {
     varNames -= s
+    statement.filter(t => t != Var(s))
     this
   }
 
 }
 
-case class UntypedContext(override val varNames: Set[String] = Set()) extends DerivationContext
+case class SimplyTypedContext(override val varNames: Set[String] = Set(), override val statement: ListBuffer[STTerm] = new ListBuffer[STTerm]()) extends DerivationContext(varNames, statement)
 
-case class SimplyTypedContext(override val varNames: Set[String] = Set()) extends DerivationContext
+case class UntypedContext(override val varNames: Set[String] = Set(), override val statement: ListBuffer[UTTerm] = new ListBuffer[UTTerm]()) extends DerivationContext(varNames, statement)
+

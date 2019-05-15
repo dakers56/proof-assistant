@@ -3,11 +3,11 @@ package com.dakers.lambda
 trait STTermNotation {
 
   implicit class TypedTerm(val t: UTTerm) {
-    def :|(u: SimpleType): STTerm[SimpleType] = STTerm(t, u)
+    def :|(u: SimpleType): STTerm = STTerm(t, u)
   }
 
   implicit class TypedTermFromString(val s: String) {
-    def :|(u: SimpleType): STTerm[SimpleType] = STTerm(Var(s), u)
+    def :|(u: SimpleType): STTerm = STTerm(Var(s), u)
   }
 
   implicit class ArrowConv(val t1: SimpleType) {

@@ -6,7 +6,7 @@ package com.dakers.lambda
  *
  * Nederpelt, Rob. Type Theory and Formal Proof: An Introduction (Kindle Locations 645-646). Cambridge University Press. Kindle Edition.
  */
-sealed abstract class UTTerm(override val free: Set[String], override val bound: Set[String]) extends Term(free, bound){
+sealed abstract class UTTerm(override val free: Set[String], override val bound: Set[String]) extends Term(free, bound) {
 
 }
 
