@@ -59,7 +59,7 @@ object AlphaConv {
     M match {
       case Var(v) => if (v == x) N else M
       case App(t1, t2) => App(subst(t1, N, x), subst(t2, N, x))
-      case Abst(m, z) => if (z == x) throw new RuntimeException(s"Cannot substitute for bound variable $z in $m") else Abst(subst(m, N, x), z)
+      case Abst(m, z) => if (z == Var(x)) throw new RuntimeException(s"Cannot substitute for bound variable $z in $m") else Abst(subst(m, N, x), z)
     }
 
   }
