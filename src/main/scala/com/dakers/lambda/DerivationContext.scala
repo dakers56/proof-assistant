@@ -3,20 +3,25 @@ package com.dakers.lambda
 
 abstract class DerivationContext[T](private var _context: List[T] = List()) {
 
-  def context(): List[T] = _context
+  def stmts(): List[T] = _context
 
   def varCount(v: String): Int
 
-  def add(t: T): Unit = _context.contains(t) match {
-    case false => _context = t :: _context
+  def add(t: T): Unit = {
+    _context.contains(t) match {
+      case false => _context = t :: _context
+      case true => _context = _context
+    }
   }
 
-  def del(t: T): Unit = _context.filter(u => u != t)
+  def del(t: T): Unit = {
+    _context = _context.filter(u => u != t)
+  }
 
 }
 
 class UntypedDerivationContext extends DerivationContext[UTTerm] {
-  override def varCount(v: String): Int = super.context().map(t => t.varNames.contains(v)).count(u => u)
+  override def varCount(v: String): Int = super.stmts().map(t => t.varNames.contains(v)).count(u => u)
 }
 
 object UntypedDerivationContext {
@@ -25,7 +30,7 @@ object UntypedDerivationContext {
 
 
 class SimplyTypedDerivationContext extends DerivationContext[STTerm] {
-  override def varCount(v: String): Int = super.context().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
+  override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
 }
 
 object SimplyTypedDerivationContext {

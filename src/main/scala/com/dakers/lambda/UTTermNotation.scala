@@ -35,10 +35,12 @@ trait UTTermNotation {
 
   def /|(s: String, t: String): Abst = /|(s, Var(t))
 
+  implicit def varConv(s: String): UTTerm = Var(s)
+
 }
 
 object UTTermNotation {
-  def strToVar(s: String): Var = {
+  def strToVar(s: String): UTTerm = {
     Var(s)
   }
 }
