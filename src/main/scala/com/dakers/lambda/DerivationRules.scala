@@ -1,5 +1,8 @@
 package com.dakers.lambda
 
-class DerivationRules {
-
+trait DerivationRule[T] {
 }
+
+trait Premise[T] {}
+
+trait Conclusion[T] {}

@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class STTermNotationTest extends FlatSpec with Matchers with STTermNotation with UTTermNotation {
+class StatementNotationTest extends FlatSpec with Matchers with STTermNotation with UTTermNotation {
 
   // Test a term
   "x :| X" should "create a term x of type X" in {

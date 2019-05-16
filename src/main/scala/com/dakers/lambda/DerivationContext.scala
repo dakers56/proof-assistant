@@ -29,7 +29,7 @@ object UntypedDerivationContext {
 }
 
 
-class SimplyTypedDerivationContext extends DerivationContext[STTerm] {
+class SimplyTypedDerivationContext extends DerivationContext[Statement] {
   override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
 }
 
