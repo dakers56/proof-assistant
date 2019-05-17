@@ -132,4 +132,47 @@ class SimplyTypedDerivationContextTest extends FlatSpec with Matchers with UTNot
     )
   }
 
+  "The domain of the empty context" should "be empty" in {
+    SimplyTypedDerivationContext().dom() should be(Set())
+  }
+
+  "The domain of x:X " should "be x" in {
+    SimplyTypedDerivationContext(List("x" :| "X")).dom() should be(Set("x"))
+  }
+
+  "The domain of x:X, y:Y " should "be x" in {
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).dom() should be(Set("x", "y"))
+  }
+
+  "The projection of the empty context onto the empty context" should "be empty" in {
+    SimplyTypedDerivationContext(List()).proj(Set()) should be(Set())
+  }
+
+  "The projection of the empty context onto a non-empty context" should "be empty" in {
+    SimplyTypedDerivationContext(List()).proj(Set("x", "y", "z")) should be(Set())
+  }
+
+  "The projection of x:X, y:Y onto x : X" should "be x" in {
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).proj(Set("x")) should be(Set("x"))
+  }
+
+  "A context" should "always be a permutation of itself" in {
+    SimplyTypedDerivationContext().isPerm(SimplyTypedDerivationContext()) should be(true)
+    SimplyTypedDerivationContext(List("x" :| "X")).isPerm(SimplyTypedDerivationContext(List("x" :| "X"))) should be(true)
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).isPerm(SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y"))) should be(true)
+  }
+
+  "A context with the same declarations in a different order as the original" should "always be a permutation of the original" in {
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).isPerm(SimplyTypedDerivationContext(List("y" :| "Y", "x" :| "X"))) should be(true)
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z")).isPerm(SimplyTypedDerivationContext(List("y" :| "Y", "z" :| "Z", "x" :| "X"))) should be(true)
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z")).isPerm(SimplyTypedDerivationContext(List("z" :| "Z", "y" :| "Y", "x" :| "X"))) should be(true)
+  }
+
+  "A context with a declaration not in the original" should "never be a permutation of the original" in {
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z")).isPerm(SimplyTypedDerivationContext(List("y" :| "Y", "x" :| "X"))) should be(false)
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z", "a" :| "A")).isPerm(SimplyTypedDerivationContext(List("y" :| "Y", "z" :| "Z", "x" :| "X"))) should be(false)
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z", "a" :| "A")).isPerm(SimplyTypedDerivationContext(List("z" :| "Z", "y" :| "Y", "x" :| "X"))) should be(false)
+  }
+
+
 }

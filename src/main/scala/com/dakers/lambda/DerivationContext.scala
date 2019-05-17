@@ -22,6 +22,16 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
   def bound(): Set[String]
 
+  def dom(): Set[String] = free union bound
+
+  def proj(vars: Set[String]): Set[String] = vars intersect dom()
+
+  def isPerm(d: DerivationContext[T]): Boolean = {
+    stmts().foreach(s => if (!d.stmts().contains(s)) return false)
+    d.stmts().foreach(s => if (!stmts().contains(s)) return false)
+    return true
+  }
+
   override def toString: String = _stmts.map(x => x.toString).mkString(",")
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[DerivationContext[T]]
