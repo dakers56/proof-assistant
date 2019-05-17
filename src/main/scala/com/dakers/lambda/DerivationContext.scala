@@ -24,7 +24,9 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
   def dom(): Set[String] = free union bound
 
-  def proj(vars: Set[String]): Set[String] = vars intersect dom()
+  def projVars(vars: Set[String]): Set[String] = vars intersect dom()
+
+  def proj(vars: Set[String]): List[T]
 
   def isPerm(d: DerivationContext[T]): Boolean = {
     stmts().foreach(s => if (!d.stmts().contains(s)) return false)
@@ -63,6 +65,11 @@ class UntypedDerivationContext extends DerivationContext[UTTerm] {
   override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.free).toSet
 
   override def bound(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.bound).toSet
+
+  override def proj(vars: Set[String]): List[UTTerm] = {
+    val pv = projVars(vars)
+    stmts().filter(s => s.varNames.subsetOf(pv))
+  }
 }
 
 object UntypedDerivationContext {
@@ -84,6 +91,12 @@ class SimplyTypedDerivationContext extends DerivationContext[Statement] {
       throw new RuntimeException("Cannot add a term to a context if one of its free terms is already bound. Term free vars: " + t.term.free + "; context free vars: " + free)
     super.add(t)
   }
+
+  override def proj(vars: Set[String]): List[Statement] = {
+    val pv = projVars(vars)
+    stmts().filter(s => s.term.varNames.subsetOf(pv))
+  }
+
 }
 
 object SimplyTypedDerivationContext extends STNotation {

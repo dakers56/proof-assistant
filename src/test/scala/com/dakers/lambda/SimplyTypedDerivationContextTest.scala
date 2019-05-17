@@ -145,15 +145,20 @@ class SimplyTypedDerivationContextTest extends FlatSpec with Matchers with UTNot
   }
 
   "The projection of the empty context onto the empty context" should "be empty" in {
-    SimplyTypedDerivationContext(List()).proj(Set()) should be(Set())
+    SimplyTypedDerivationContext(List()).projVars(Set()) should be(Set())
   }
 
   "The projection of the empty context onto a non-empty context" should "be empty" in {
-    SimplyTypedDerivationContext(List()).proj(Set("x", "y", "z")) should be(Set())
+    SimplyTypedDerivationContext(List()).projVars(Set("x", "y", "z")) should be(Set())
   }
 
   "The projection of x:X, y:Y onto x : X" should "be x" in {
-    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).proj(Set("x")) should be(Set("x"))
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).projVars(Set("x")) should be(Set("x"))
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y")).proj(Set("x")) should be(List("x" :| "X"))
+  }
+
+  "The projection of of x:X, y:Y, z :| Z onto x, z" should "be x :| X, z :| Z" in {
+    SimplyTypedDerivationContext(List("x" :| "X", "y" :| "Y", "z" :| "Z")).proj(Set("x", "z")) should be(List("x" :| "X", "z" :| "Z"))
   }
 
   "A context" should "always be a permutation of itself" in {
