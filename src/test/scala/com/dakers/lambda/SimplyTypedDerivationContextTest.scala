@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class TypedDerivationContextTest extends FlatSpec with Matchers with UTNotation with STNotation {
+class SimplyTypedDerivationContextTest extends FlatSpec with Matchers with UTNotation with STNotation {
 
   //empty derivation context
   "An empty typed context" should " have no terms in it" in {
@@ -85,8 +85,8 @@ class TypedDerivationContextTest extends FlatSpec with Matchers with UTNotation 
   //Anti-commutativity
   "Adding a term t1 and then t2 to an empty typed context " should " not be the same as doing that in the reverse order" in {
     val stContext1 = SimplyTypedDerivationContext()
-    val term1 : Statement = "x" :| "X"
-    val term2 : Statement = "y" :| "Y"
+    val term1: Statement = "x" :| "X"
+    val term2: Statement = "y" :| "Y"
     stContext1.add(term1)
     stContext1.add(term2)
 
@@ -95,6 +95,19 @@ class TypedDerivationContextTest extends FlatSpec with Matchers with UTNotation 
     stContext2.add(term1)
 
     stContext1.stmts() should not(be(stContext2.stmts()))
+  }
+
+  "A context with no free variables' free() method" should "return an empty set" in {
+    SimplyTypedDerivationContext().free() should be(Set())
+    SimplyTypedDerivationContext(List(/|("x", "x") :| "T")).free() should be(Set())
+    SimplyTypedDerivationContext(List(/|("x", "x") :| "T", /|("y", "y") :| "T")).free() should be(Set())
+  }
+
+  "A context with one free variables' free() method" should "return a set containing only that variable" in {
+    SimplyTypedDerivationContext().free() should be(Set())
+    SimplyTypedDerivationContext(List("x" :| "T")).free() should be(Set("x"))
+    SimplyTypedDerivationContext(List(/|("x", "x") :| "T", "y" :| "T")).free() should be(Set("y"))
+    SimplyTypedDerivationContext(List(/|("x", "x") :| "T", "y" :| "T", "z" :| "T")).free() should be(Set("y", "z"))
   }
 
 }

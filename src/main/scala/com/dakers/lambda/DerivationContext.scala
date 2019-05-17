@@ -18,6 +18,10 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
     _stmts = _stmts.filter(u => u != t)
   }
 
+  def free(): Set[String]
+
+  def bound(): Set[String]
+
   override def toString: String = _stmts.map(x => x.toString).mkString(",")
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[DerivationContext[T]]
@@ -37,6 +41,10 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
 class UntypedDerivationContext extends DerivationContext[UTTerm] {
   override def varCount(v: String): Int = super.stmts().map(t => t.varNames.contains(v)).count(u => u)
+
+  override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.free).toSet
+
+  override def bound(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.bound).toSet
 }
 
 object UntypedDerivationContext {
@@ -46,6 +54,10 @@ object UntypedDerivationContext {
 
 class SimplyTypedDerivationContext extends DerivationContext[Statement] {
   override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
+
+  override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.free).toSet
+
+  override def bound(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.bound).toSet
 }
 
 object SimplyTypedDerivationContext extends STNotation {
