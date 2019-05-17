@@ -1,6 +1,6 @@
 package com.dakers.lambda
 
-object Lemma {
+object Subcontext {
 
   def isSubcontext(g1: List[Statement], g2: List[Statement]): Boolean = {
     g1 match {
@@ -12,4 +12,16 @@ object Lemma {
     }
   }
 
+  def isSubcontext(d1: DerivationContext[Statement], d2: DerivationContext[Statement]): Boolean = isSubcontext(d1.stmts(), d2.stmts())
+
 }
+
+object Thinning {
+  def apply[T](j: Judgement[Statement], g: SimplyTypedDerivationContext): Option[Judgement[Statement]] = {
+    Subcontext.isSubcontext(j.gamma, g) match {
+      case true => Some(Judgement(g, j.subject))
+      case false => None
+    }
+  }
+}
+

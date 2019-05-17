@@ -1,9 +1,9 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.Lemma.isSubcontext
+import com.dakers.lambda.Subcontext.isSubcontext
 import org.scalatest.{FlatSpec, Matchers}
 
-class LemmaTest extends FlatSpec with Matchers with UTNotation with STNotation {
+class SubcontextTest extends FlatSpec with Matchers with UTNotation with STNotation {
 
   //positive cases
   "The empty context" should "be a subcontext of the empty contest" in {
