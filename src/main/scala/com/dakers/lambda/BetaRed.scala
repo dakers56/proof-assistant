@@ -11,7 +11,7 @@ object BetaRed {
     }
   }
 
-  def redexes(term: UTTerm):List[App] = redexes(term, List())
+  def redexes(term: UTTerm): List[App] = redexes(term, List())
 
   def redexes(term: UTTerm, rdxs: List[App]): List[App] = {
     term match {
