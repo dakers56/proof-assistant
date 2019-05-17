@@ -9,7 +9,7 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
   def add(t: T): Unit = {
     _stmts.contains(t) match {
-      case false => _stmts = t :: _stmts
+      case false => _stmts = _stmts :+ t
       case true => _stmts = _stmts
     }
   }
@@ -48,7 +48,7 @@ class SimplyTypedDerivationContext extends DerivationContext[Statement] {
   override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
 }
 
-object SimplyTypedDerivationContext extends STTermNotation {
+object SimplyTypedDerivationContext extends STNotation {
   def apply(): SimplyTypedDerivationContext = new SimplyTypedDerivationContext()
 
   def apply(stmts: List[Statement]): SimplyTypedDerivationContext = {

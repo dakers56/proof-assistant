@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class StatementTest extends FlatSpec with Matchers with STTermNotation with UTTermNotation {
+class StatementTest extends FlatSpec with Matchers with STNotation with UTNotation {
 
   "A term with a variable type " should " have a variable as its type" in {
     val term = "x" * "y"

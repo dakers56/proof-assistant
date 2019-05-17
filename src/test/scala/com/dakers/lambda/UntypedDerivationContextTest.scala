@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class UntypedDerivationContextTest extends FlatSpec with Matchers with UTTermNotation with STTermNotation {
+class UntypedDerivationContextTest extends FlatSpec with Matchers with UTNotation with STNotation {
 
   //empty derivation context
   "An empty untyped context" should " have no terms in it" in {

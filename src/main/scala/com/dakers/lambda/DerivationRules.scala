@@ -43,8 +43,10 @@ object VarRule {
 
   object AbstRule {
     def apply(judgement: Judgement[Statement]): Option[Judgement[Statement]] = {
-      judgement.gamma.stmts.reverse match {
-        case Statement(Var(x), s) :: gamma => Some(Judgement(SimplyTypedDerivationContext(gamma), Statement(Abst(judgement.subject.term, Var(x)), s)))
+      val last = if (judgement.gamma != Nil && judgement.gamma.stmts().size > 0) judgement.gamma.stmts.last else return None
+      val first = if (judgement.gamma != Nil && judgement.gamma.stmts().size > 0) judgement.gamma.stmts.reverse.tail.reverse else return None
+      last match {
+        case Statement(Var(x), s) => Some(Judgement(SimplyTypedDerivationContext(first), Statement(Abst(judgement.subject.term, Var(x)), ArrType(last.sType, judgement.subject.sType))))
         case _ => {
           println("Judgement was not of expected form for abstraction: " + judgement)
           None

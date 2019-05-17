@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable.ListBuffer
 
-class VarRuleTest extends FlatSpec with Matchers with UTTermNotation with STTermNotation {
+class VarRuleTest extends FlatSpec with Matchers with UTNotation with STNotation {
 
   //Positive cases
 

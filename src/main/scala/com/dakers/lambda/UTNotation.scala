@@ -1,13 +1,10 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.TermUtils.checkVars
 
-
-trait UTTermNotation {
+trait UTNotation {
 
   implicit class AppTermTerm[T <: UTTerm](val t1: T) {
     def *(t2: UTTerm): App = {
-      checkVars(t1, t2)
       App(t1, t2)
     }
 
@@ -17,14 +14,12 @@ trait UTTermNotation {
   implicit class AppStringTerm(val s1: String) {
     def *(t2: UTTerm): App = {
       val t1 = Var(s1)
-      checkVars(t1, t2)
       App(t1, t2)
     }
 
     def *(s2: String): App = {
       val t1 = Var(s1)
       val t2 = Var(s2)
-      checkVars(t1, t2)
       App(t1, t2)
     }
   }
@@ -39,7 +34,7 @@ trait UTTermNotation {
 
 }
 
-object UTTermNotation {
+object UTNotation {
   def strToVar(s: String): UTTerm = {
     Var(s)
   }

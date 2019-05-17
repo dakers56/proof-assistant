@@ -2,7 +2,7 @@ package com.dakers.lambda
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class TypedDerivationContextTest extends FlatSpec with Matchers with UTTermNotation with STTermNotation {
+class TypedDerivationContextTest extends FlatSpec with Matchers with UTNotation with STNotation {
 
   //empty derivation context
   "An empty typed context" should " have no terms in it" in {
@@ -19,10 +19,10 @@ class TypedDerivationContextTest extends FlatSpec with Matchers with UTTermNotat
 
   "An typed context with one term in it " should " have two terms in it after a new one is added" in {
     val stContext = SimplyTypedDerivationContext()
-    val term1: Statement = Statement("x", "y".vt)
+    val term1: Statement = Statement("x", "y".tv)
     stContext.add(term1)
 
-    val term2: Statement = Statement("y", "y".vt)
+    val term2: Statement = Statement("y", "y".tv)
     stContext.add(term2)
 
     stContext.stmts().size should be(2)

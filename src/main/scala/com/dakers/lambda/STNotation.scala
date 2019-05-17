@@ -1,6 +1,6 @@
 package com.dakers.lambda
 
-trait STTermNotation {
+trait STNotation {
 
   implicit class TypedTerm(val t: UTTerm) {
     def :|(u: SimpleType): Statement = Statement(t, u)
@@ -11,13 +11,13 @@ trait STTermNotation {
   }
 
   implicit class ArrowConv(val t1: SimpleType) {
-    def ->:(t2: SimpleType): ArrType = ArrType(t2, t1)
+    def ->:(t2: SimpleType): SimpleType = ArrType(t2, t1)
   }
 
   implicit class ArrConvLeft(val s: String) {
-    def vt: VarType = VarType(s)
+    def tv: VarType = VarType(s)
   }
 
-  implicit def strConvVar(s: String): VarType = VarType(s)
+  implicit def strConvVar(s: String): SimpleType = VarType(s)
 
 }
