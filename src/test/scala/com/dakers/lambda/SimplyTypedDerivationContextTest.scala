@@ -110,4 +110,26 @@ class SimplyTypedDerivationContextTest extends FlatSpec with Matchers with UTNot
     SimplyTypedDerivationContext(List(/|("x", "x") :| "T", "y" :| "T", "z" :| "T")).free() should be(Set("y", "z"))
   }
 
+  "Adding a term with a free variable that is already bound in the context" should "throw an exception" in {
+    val ctx = SimplyTypedDerivationContext(List(/|("x", "x") :| "T"))
+    intercept[RuntimeException](
+      ctx.add("x" :| "T")
+    )
+
+    intercept[RuntimeException](
+      ctx.add(("x" * "y") :| "T")
+    )
+  }
+
+  "Adding a term with a bound variable that is already fre in the context" should "throw an exception" in {
+    val ctx = SimplyTypedDerivationContext(List("x" :| "T"))
+    intercept[RuntimeException](
+      ctx.add(/|("x", "x") :| "T")
+    )
+
+    intercept[RuntimeException](
+      ctx.add(/|("x", "x" * "y") :| "T")
+    )
+  }
+
 }
