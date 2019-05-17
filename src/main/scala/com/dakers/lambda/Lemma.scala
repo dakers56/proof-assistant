@@ -23,5 +23,12 @@ object Thinning {
       case false => None
     }
   }
+
+  object Condensing {
+    def apply(j: Judgement[Statement]): Judgement[Statement] = {
+      Judgement(SimplyTypedDerivationContext(j.gamma.proj(j.subject.term.free)), j.subject)
+    }
+  }
+
 }
 
