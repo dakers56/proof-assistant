@@ -23,12 +23,21 @@ object Thinning {
       case false => None
     }
   }
-
+}
   object Condensing {
     def apply(j: Judgement[Statement]): Judgement[Statement] = {
       Judgement(SimplyTypedDerivationContext(j.gamma.proj(j.subject.term.free)), j.subject)
     }
   }
 
-}
+  object Permutation {
+    def apply(j: Judgement[Statement], perm: SimplyTypedDerivationContext): Option[Judgement[Statement]] = {
+      if (j.gamma.stmts().toSet == perm.stmts().toSet)  return Some(Judgement(perm, j.subject))
+      val stmts = j.gamma.stmts()
+      println(s"$perm was not a permutation of $stmts")
+      None
+    }
+  }
+
+
 

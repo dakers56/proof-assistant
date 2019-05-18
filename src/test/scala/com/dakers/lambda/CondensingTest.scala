@@ -1,6 +1,5 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.Thinning.Condensing
 import org.scalatest.{FlatSpec, Matchers}
 
 
