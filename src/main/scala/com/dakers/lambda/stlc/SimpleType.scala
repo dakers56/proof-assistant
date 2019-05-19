@@ -1,4 +1,4 @@
-package com.dakers.lambda
+package com.dakers.lambda.stlc
 
 abstract class SimpleType
 

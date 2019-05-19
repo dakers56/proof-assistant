@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.{SimpleType, VarType}
+
 /**
  *
  * @param term    Same as an untyped term, but the terms are to be interpreted as types.
