@@ -1,6 +1,7 @@
-package com.dakers.lambda
+package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.stlc.{SimpleType, VarType}
+import com.dakers.lambda.UTTerm
+import com.dakers.lambda.stlc.SimpleType
 
 /**
  *
@@ -11,9 +12,3 @@ case class π(term: UTTerm, depType: SimpleType) {
   override def toString: String = s"π($depType:*.$term)"
 }
 
-object test {
-
-  def main(args: Array[String]): Unit = {
-    println(π(Var("x"), VarType("v")))
-  }
-}
