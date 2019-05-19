@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.Statement
+
 object Judgement {
   val separator = "|-"
 }
@@ -25,7 +27,7 @@ object VarRule {
       else {
         judgement1.subject.sType match {
           case ArrType(s, t) => s match {
-            case judgement2.subject.sType => Some(Judgement(judgement1.gamma, Statement(App(judgement1.subject.term, judgement2.subject.term), t)))
+            case judgement2.subject.sType => Some(Judgement(judgement1.gamma, stlc.Statement(App(judgement1.subject.term, judgement2.subject.term), t)))
             case _ => {
               println(s"Second statement was not of the expected type. Statement 1: " + judgement1.subject.term + "; " + judgement2.subject.term)
               None
@@ -46,7 +48,7 @@ object VarRule {
       val last = if (judgement.gamma != Nil && judgement.gamma.stmts().size > 0) judgement.gamma.stmts.last else return None
       val first = if (judgement.gamma != Nil && judgement.gamma.stmts().size > 0) judgement.gamma.stmts.reverse.tail.reverse else return None
       last match {
-        case Statement(Var(x), s) => Some(Judgement(SimplyTypedDerivationContext(first), Statement(Abst(judgement.subject.term, Var(x)), ArrType(last.sType, judgement.subject.sType))))
+        case Statement(Var(x), s) => Some(Judgement(SimplyTypedDerivationContext(first), stlc.Statement(Abst(judgement.subject.term, Var(x)), ArrType(last.sType, judgement.subject.sType))))
         case _ => {
           println("Judgement was not of expected form for abstraction: " + judgement)
           None

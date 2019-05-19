@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.Statement
+
 object Subcontext {
 
   def isSubcontext(g1: List[Statement], g2: List[Statement]): Boolean = {

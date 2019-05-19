@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.Statement
+
 
 abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
