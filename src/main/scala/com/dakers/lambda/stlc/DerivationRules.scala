@@ -1,6 +1,6 @@
-package com.dakers.lambda
+package com.dakers.lambda.stlc
 
-import com.dakers.lambda.stlc.{ArrType, Statement}
+import com.dakers.lambda._
 
 object Judgement {
   val separator = "|-"
