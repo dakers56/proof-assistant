@@ -1,5 +1,6 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.{ArrType, STStatement, VarType}
 import org.scalatest.{FlatSpec, Matchers}
 
 class StatementTest extends FlatSpec with Matchers with STNotation with UTNotation {
@@ -7,7 +8,7 @@ class StatementTest extends FlatSpec with Matchers with STNotation with UTNotati
   "A term with a variable type " should " have a variable as its type" in {
     val term = "x" * "y"
     val varType = VarType("X")
-    val stTerm = Statement(term, varType)
+    val stTerm = STStatement(term, varType)
     stTerm.term should be(term)
     stTerm.sType should be(varType)
   }
@@ -15,7 +16,7 @@ class StatementTest extends FlatSpec with Matchers with STNotation with UTNotati
   "The string representation of a term with a variable type " should " be the term followed by a separator followed by its type" in {
     val term = "x" * "y"
     val varType = VarType("X")
-    val stTerm = Statement(term, varType)
+    val stTerm = stlc.STStatement(term, varType)
     stTerm.toString should be(term + ":" + varType)
   }
 
@@ -25,7 +26,7 @@ class StatementTest extends FlatSpec with Matchers with STNotation with UTNotati
     val varType2 = VarType("Y")
     val arrowType = ArrType(varType1, varType2)
 
-    val stTerm = Statement(term, arrowType)
+    val stTerm = stlc.STStatement(term, arrowType)
     stTerm.term should be(term)
     stTerm.sType should be(ArrType(varType1, varType2))
   }
@@ -35,7 +36,7 @@ class StatementTest extends FlatSpec with Matchers with STNotation with UTNotati
     val varType1 = VarType("X")
     val varType2 = VarType("Y")
     val arrowType = ArrType(varType1, varType2)
-    val stTerm = Statement(term, arrowType)
+    val stTerm = stlc.STStatement(term, arrowType)
     stTerm.toString should be(term + ":" + arrowType)
   }
 
@@ -46,12 +47,12 @@ class StatementTest extends FlatSpec with Matchers with STNotation with UTNotati
     val arrowType1 = ArrType(varType1, varType2)
     val arrowType2 = ArrType(varType1, arrowType1)
 
-    val stTerm = Statement(term, arrowType2)
+    val stTerm = stlc.STStatement(term, arrowType2)
     stTerm.term should be(term)
     stTerm.sType should be(ArrType(varType1, arrowType1))
 
     val arrowType3 = ArrType(arrowType1, varType1)
-    val stTerm1 = Statement(term, arrowType3)
+    val stTerm1 = stlc.STStatement(term, arrowType3)
     stTerm1.term should be(term)
     stTerm1.sType should be(arrowType3)
   }

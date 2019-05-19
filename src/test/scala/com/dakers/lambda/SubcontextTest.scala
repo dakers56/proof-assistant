@@ -1,6 +1,6 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.Subcontext.isSubcontext
+import com.dakers.lambda.stlc.Subcontext.isSubcontext
 import org.scalatest.{FlatSpec, Matchers}
 
 class SubcontextTest extends FlatSpec with Matchers with UTNotation with STNotation {

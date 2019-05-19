@@ -1,5 +1,6 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.{ArrType, VarType}
 import org.scalatest.{FlatSpec, Matchers}
 
 class StatementNotationTest extends FlatSpec with Matchers with STNotation with UTNotation {
