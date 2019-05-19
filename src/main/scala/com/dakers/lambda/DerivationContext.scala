@@ -1,6 +1,6 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.stlc.Statement
+import com.dakers.lambda.stlc.STStatement
 
 
 abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
@@ -79,14 +79,14 @@ object UntypedDerivationContext {
 }
 
 
-class SimplyTypedDerivationContext extends DerivationContext[Statement] {
+class SimplyTypedDerivationContext extends DerivationContext[STStatement] {
   override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
 
   override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.free).toSet
 
   override def bound(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.bound).toSet
 
-  override def add(t: Statement): Unit = {
+  override def add(t: STStatement): Unit = {
     if (!(t.term.free intersect bound()).isEmpty)
       throw new RuntimeException("Cannot add a term to a context if one of its free terms is already bound. Term free vars: " + t.term.free + "; context free vars: " + free())
     if (!(t.term.bound intersect free).isEmpty)
@@ -94,7 +94,7 @@ class SimplyTypedDerivationContext extends DerivationContext[Statement] {
     super.add(t)
   }
 
-  override def proj(vars: Set[String]): List[Statement] = {
+  override def proj(vars: Set[String]): List[STStatement] = {
     val pv = projVars(vars)
     stmts().filter(s => s.term.varNames.subsetOf(pv))
   }
@@ -104,10 +104,25 @@ class SimplyTypedDerivationContext extends DerivationContext[Statement] {
 object SimplyTypedDerivationContext extends STNotation {
   def apply(): SimplyTypedDerivationContext = new SimplyTypedDerivationContext()
 
-  def apply(stmts: List[Statement]): SimplyTypedDerivationContext = {
+  def apply(stmts: List[STStatement]): SimplyTypedDerivationContext = {
     val ctx = SimplyTypedDerivationContext()
     stmts.foreach(t => ctx.add(t))
     ctx
   }
+
+  /**
+   * Second order derivation context. Permits terms depending on types.
+   */
+
+  object L2Context extends STNotation {
+    def apply(): SimplyTypedDerivationContext = new SimplyTypedDerivationContext()
+
+    def apply(stmts: List[STStatement]): SimplyTypedDerivationContext = {
+      val ctx = SimplyTypedDerivationContext()
+      stmts.foreach(t => ctx.add(t))
+      ctx
+    }
+  }
+
 }
 

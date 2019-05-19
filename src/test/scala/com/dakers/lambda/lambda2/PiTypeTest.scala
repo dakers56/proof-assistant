@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.lambda2.π
+import com.dakers.lambda.stlc.{ArrType, VarType}
 import org.scalatest.{FlatSpec, Matchers}
 
 class PiTypeTest extends FlatSpec with Matchers with UTNotation with STNotation {
@@ -12,13 +14,13 @@ class PiTypeTest extends FlatSpec with Matchers with UTNotation with STNotation 
   }
 
   "A pi type " should "be able to quantify over arrow types and simple types" in {
-    var st =  π("x", "V")
+    var st = lambda2.π("x", "V")
     st.term should be(Var("x"))
     st.depType should be(VarType("V"))
 
-    val arr : ArrType= ArrType("X", "Y")
+    val arr: ArrType = ArrType("X", "Y")
     val term = /|("x", "y")
-    st =  π(term, arr)
+    st = lambda2.π(term, arr)
     st.term should be(term)
     st.depType should be(arr)
 

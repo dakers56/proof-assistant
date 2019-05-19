@@ -11,4 +11,3 @@ import com.dakers.lambda.stlc.SimpleType
 case class π(term: UTTerm, depType: SimpleType) {
   override def toString: String = s"π($depType:*.$term)"
 }
-

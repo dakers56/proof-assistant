@@ -1,15 +1,15 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.stlc.{ArrType, SimpleType, Statement, VarType}
+import com.dakers.lambda.stlc.{ArrType, SimpleType, STStatement, VarType}
 
 trait STNotation {
 
   implicit class TypedTerm(val t: UTTerm) {
-    def :|(u: SimpleType): Statement = stlc.Statement(t, u)
+    def :|(u: SimpleType): STStatement = stlc.STStatement(t, u)
   }
 
   implicit class TypedTermFromString(val s: String) {
-    def :|(u: SimpleType): Statement = stlc.Statement(Var(s), u)
+    def :|(u: SimpleType): STStatement = stlc.STStatement(Var(s), u)
   }
 
   implicit class ArrowConv(val t1: SimpleType) {

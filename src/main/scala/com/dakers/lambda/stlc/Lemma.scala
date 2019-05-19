@@ -4,7 +4,7 @@ import com.dakers.lambda.{DerivationContext, SimplyTypedDerivationContext, stlc}
 
 object Subcontext {
 
-  def isSubcontext(g1: List[Statement], g2: List[Statement]): Boolean = {
+  def isSubcontext(g1: List[STStatement], g2: List[STStatement]): Boolean = {
     g1 match {
       case Nil => true
       case h :: t => g2 match {
@@ -14,12 +14,12 @@ object Subcontext {
     }
   }
 
-  def isSubcontext(d1: DerivationContext[Statement], d2: DerivationContext[Statement]): Boolean = isSubcontext(d1.stmts(), d2.stmts())
+  def isSubcontext(d1: DerivationContext[STStatement], d2: DerivationContext[STStatement]): Boolean = isSubcontext(d1.stmts(), d2.stmts())
 
 }
 
 object Thinning {
-  def apply[T](j: Judgement[Statement], g: SimplyTypedDerivationContext): Option[Judgement[Statement]] = {
+  def apply[T](j: Judgement[STStatement], g: SimplyTypedDerivationContext): Option[Judgement[STStatement]] = {
     Subcontext.isSubcontext(j.gamma, g) match {
       case true => Some(Judgement(g, j.subject))
       case false => None
@@ -27,13 +27,13 @@ object Thinning {
   }
 }
   object Condensing {
-    def apply(j: Judgement[Statement]): Judgement[Statement] = {
+    def apply(j: Judgement[STStatement]): Judgement[STStatement] = {
       stlc.Judgement(SimplyTypedDerivationContext(j.gamma.proj(j.subject.term.free)), j.subject)
     }
   }
 
   object Permutation {
-    def apply(j: Judgement[Statement], perm: SimplyTypedDerivationContext): Option[Judgement[Statement]] = {
+    def apply(j: Judgement[STStatement], perm: SimplyTypedDerivationContext): Option[Judgement[STStatement]] = {
       if (j.gamma.stmts().toSet == perm.stmts().toSet)  return Some(stlc.Judgement(perm, j.subject))
       val stmts = j.gamma.stmts()
       println(s"$perm was not a permutation of $stmts")
