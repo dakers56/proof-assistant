@@ -1,6 +1,6 @@
-package com.dakers.lambda
+package com.dakers.lambda.stlc
 
-import com.dakers.lambda.stlc.{Judgement, Statement}
+import com.dakers.lambda.{DerivationContext, SimplyTypedDerivationContext, stlc}
 
 object Subcontext {
 
