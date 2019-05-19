@@ -11,7 +11,7 @@ trait STNotation {
   }
 
   implicit class ArrowConv(val t1: SimpleType) {
-    def ->:(t2: SimpleType): SimpleType = ArrType(t2, t1)
+    def ->:(t2: SimpleType): ArrType = ArrType(t2, t1)
   }
 
   implicit class ArrConvLeft(val s: String) {
