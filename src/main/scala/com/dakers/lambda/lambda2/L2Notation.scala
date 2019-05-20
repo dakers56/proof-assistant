@@ -1,7 +1,6 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.{UTTerm, Var, stlc}
-import com.dakers.lambda.stlc.{STStatement, SimpleType, VarType}
+import com.dakers.lambda.{UTTerm, Var}
 
 trait L2Notation {
 

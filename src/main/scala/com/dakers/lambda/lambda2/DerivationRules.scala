@@ -1,7 +1,7 @@
 package com.dakers.lambda.lambda2
 
 import com.dakers.lambda.stlc.{ArrType, Judgement}
-import com.dakers.lambda.{App, Var}
+import com.dakers.lambda.{App, STNotation, UTNotation, Var}
 
 object VarRule {
   def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = judgement.subject match {
@@ -36,5 +36,13 @@ object ApplRule {
     }
   }
 
+  object Form2 extends L2Notation with STNotation with UTNotation {
+    def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
+      if (judgement.subject.utTerm.free.filterNot(v => judgement.gamma.stmts().contains(v)).isEmpty) {
+        Some(Judgement(judgement.gamma, judgement.subject.utTerm :|| *()))
+      }
+      None
+    }
+  }
 
 }
