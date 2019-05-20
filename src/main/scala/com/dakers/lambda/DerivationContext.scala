@@ -111,40 +111,6 @@ object SimplyTypedDerivationContext extends STNotation {
     ctx
   }
 
-  /**
-   * Second order derivation context. Permits terms depending on types.
-   */
-
-  class L2Context extends DerivationContext[L2Statement] {
-    override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.term.varNames.contains(v)).count(u => u)
-
-    override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.term.free).toSet
-
-    override def bound(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.term.bound).toSet
-
-    override def add(t: L2Statement): Unit = {
-      if (!(t.term.term.free intersect bound()).isEmpty)
-        throw new RuntimeException("Cannot add a term to a context if one of its free terms is already bound. Term free vars: " + t.term.term.free + "; context free vars: " + free())
-      if (!(t.term.term.bound intersect free).isEmpty)
-        throw new RuntimeException("Cannot add a term to a context if one of its free terms is already bound. Term free vars: " + t.term.term.free + "; context free vars: " + free)
-      super.add(t)
-    }
-
-    override def proj(vars: Set[String]): List[L2Statement] = {
-      val pv = projVars(vars)
-      stmts().filter(s => s.term.term.varNames.subsetOf(pv))
-    }
-  }
-
-  object L2Context extends STNotation {
-    def apply(): L2Context = new L2Context()
-
-    def apply(stmts: List[L2Statement]): L2Context = {
-      val ctx = L2Context()
-      stmts.foreach(t => ctx.add(t))
-      ctx
-    }
-  }
 
 }
 

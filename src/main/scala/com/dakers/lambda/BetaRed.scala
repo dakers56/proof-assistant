@@ -1,5 +1,7 @@
 package com.dakers.lambda
 
+import com.dakers.lambda.stlc.{STStatement, SimpleType}
+
 object BetaRed {
 
   def red1s(term: UTTerm, x: String): UTTerm = {
@@ -10,6 +12,8 @@ object BetaRed {
       case _ => println(s"$term was already in beta-normal form"); term
     }
   }
+
+
 
   def redexes(term: UTTerm): List[App] = redexes(term, List())
 
