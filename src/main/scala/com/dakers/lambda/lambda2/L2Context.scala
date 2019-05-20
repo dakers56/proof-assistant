@@ -1,7 +1,6 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.stlc.STStatement
-import com.dakers.lambda.{DerivationContext, STNotation, SimplyTypedDerivationContext, UTTerm}
+import com.dakers.lambda.{DerivationContext, STNotation}
 
 class L2Context extends DerivationContext[L2Statement] {
 

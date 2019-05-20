@@ -2,10 +2,10 @@ package com.dakers.lambda.lambda2
 
 import com.dakers.lambda.lambda2.L2Type.red1s
 import com.dakers.lambda.stlc.VarType
-import com.dakers.lambda.{L2Conv, STNotation, UTNotation}
+import com.dakers.lambda.{STNotation, UTNotation}
 import org.scalatest.{FlatSpec, Matchers}
 
-class BetaReductionTest extends FlatSpec with Matchers with UTNotation with STNotation with L2Conv {
+class BetaReductionTest extends FlatSpec with Matchers with UTNotation with STNotation {
   "The type A[A:=B]" should " beta reduce to B" in {
     red1s(VarType("A"), VarType("A"), VarType("B")) should be(VarType("B"))
   }
