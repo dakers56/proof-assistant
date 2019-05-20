@@ -38,6 +38,8 @@ object ApplRule {
 
   object Form2 extends L2Notation with STNotation with UTNotation {
     def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
+      val |- = judgement.gamma
+
       if (judgement.subject.utTerm.free.filterNot(v => judgement.gamma.stmts().contains(v)).isEmpty) {
         Some(Judgement(judgement.gamma, judgement.subject.utTerm :|| *()))
       }
