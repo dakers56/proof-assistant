@@ -2,6 +2,7 @@ package com.dakers.lambda.lambda2
 
 import com.dakers.lambda.stlc.{ArrType, Judgement}
 import com.dakers.lambda.{App, STNotation, UTNotation, Var}
+import π.subst;
 
 object VarRule {
   def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = judgement.subject match {
@@ -35,16 +36,31 @@ object ApplRule {
       }
     }
   }
+}
 
-  object Form2 extends L2Notation with STNotation with UTNotation {
-    def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
-      val |- = judgement.gamma
+object Form2 extends L2Notation with STNotation with UTNotation {
+  def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
+    val |- = judgement.gamma
 
-      if (judgement.subject.utTerm.free.filterNot(v => judgement.gamma.stmts().contains(v)).isEmpty) {
-        Some(Judgement(judgement.gamma, judgement.subject.utTerm :|| *()))
-      }
+    if (judgement.subject.utTerm.free.filterNot(v => judgement.gamma.stmts().contains(v)).isEmpty) {
+      Some(Judgement(judgement.gamma, judgement.subject.utTerm :|| *()))
+    }
+    None
+  }
+}
+
+object Appl2 extends L2Notation with STNotation with UTNotation {
+  def apply(m: Judgement[L2Statement], n: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
+    if (m.gamma != n.gamma) {
+      println("Contexts were not the same")
       None
     }
+    m.subject.l2Type match {
+      case π(l2, vt) => Some(Judgement(m.gamma, L2Statement(m.subject.utTerm * n.subject.utTerm, subst(m.subject.l2Type, vt, n.subject.l2Type))))
+      case _ => {
+        println("First term given to Appl2 was not a pi type")
+        None
+      }
+    }
   }
-
 }
