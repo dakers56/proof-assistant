@@ -6,11 +6,11 @@ import com.dakers.lambda.stlc.{STStatement, SimpleType, VarType}
 trait L2Notation {
 
   implicit class L2TypedTerm(val t: UTTerm) {
-    def :||(u: L2Type): L2Statement = L2Statement(t, u)
+    def :||(u: *): L2Statement = L2Statement(t, u)
   }
 
   implicit class L2TypedTermString(val t: String) {
-    def :||(u: L2Type): L2Statement = L2Statement(Var(t), u)
+    def :||(u: *): L2Statement = L2Statement(Var(t), u)
   }
 
 }

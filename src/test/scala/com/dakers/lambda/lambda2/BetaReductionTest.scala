@@ -1,6 +1,6 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.lambda2.L2Type.red1s
+import com.dakers.lambda.lambda2.*.red1s
 import com.dakers.lambda.stlc.VarType
 import com.dakers.lambda.{STNotation, UTNotation}
 import org.scalatest.{FlatSpec, Matchers}
