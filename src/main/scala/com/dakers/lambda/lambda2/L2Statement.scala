@@ -1,17 +1,21 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.UTTerm
-import com.dakers.lambda.stlc.{ArrType, SimpleType, VarType}
+import com.dakers.lambda.stlc.{ArrType, VarType}
+import com.dakers.lambda.{FBVars, UTTerm}
 
 case class L2Statement(utTerm: UTTerm, l2Type: *) {
   override def toString: String = utTerm.toString + ":" + l2Type.toString
 }
 
 /**
- * Marker trait that encapsulates pi-types and simple types*/
+ * Represents the type of all types*/
 
-class * {
+class * extends FBVars {
   override def toString: String = "*"
+
+  override def free(): Set[*] = Set()
+
+  override def bound(): Set[*] = Set()
 }
 
 object * {
@@ -29,22 +33,23 @@ object * {
 }
 
 
-case class π(l2Type: *, depType: SimpleType) {
-  override def toString: String = s"π($depType:*.$l2Type)"
+case class π(l2Type: *, toBind: VarType) extends * {
+  override def toString: String = s"π($toBind:*.$l2Type)"
+
+  override def free(): Set[*] = l2Type.free() -- toBind.free
+
+  override def bound(): Set[*] = l2Type.bound() + toBind
 }
 
 /**
  * Type of all types.
  */
-case object *** extends * {
+case object *** extends * {}
 
-}
+case class ArrType2(l2Type: *, l2Type1: *) extends * {
+  override def free(): Set[*] = l2Type.free() ++ l2Type1.free()
 
-case class ArrType2(l2Type: *, l2Type1: *) extends *
-
-object π {
-
-
+  override def bound(): Set[*] = l2Type.bound() ++ l2Type1.bound()
 }
 
 
