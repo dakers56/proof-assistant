@@ -1,6 +1,5 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.lambda2.L2Statement
 import com.dakers.lambda.stlc.STStatement
 
 
@@ -8,7 +7,6 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 
   def stmts(): List[T] = _stmts
 
-  def varCount(v: String): Int
 
   def add(t: T): Unit = {
     _stmts.contains(t) match {
@@ -55,7 +53,6 @@ abstract class DerivationContext[T](private var _stmts: List[T] = List()) {
 }
 
 class UntypedDerivationContext extends DerivationContext[UTTerm] {
-  override def varCount(v: String): Int = super.stmts().map(t => t.varNames.contains(v)).count(u => u)
 
   override def add(t: UTTerm): Unit = {
     if (!(t.free intersect bound()).isEmpty)
@@ -81,7 +78,6 @@ object UntypedDerivationContext {
 
 
 class SimplyTypedDerivationContext extends DerivationContext[STStatement] {
-  override def varCount(v: String): Int = super.stmts().map(t => t.term).map(t => t.varNames.contains(v)).count(u => u)
 
   override def free(): Set[String] = stmts().foldLeft(scala.collection.mutable.Set[String]())((acc, i) => acc ++ i.term.free).toSet
 

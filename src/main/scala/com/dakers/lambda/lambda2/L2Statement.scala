@@ -7,6 +7,8 @@ case class L2Statement(utTerm: UTTerm, l2Type: *) {
   override def toString: String = utTerm.toString + ":" + l2Type.toString
 }
 
+case class L2TypeDecl(nm: String)
+
 /**
  * Represents the type of all types*/
 

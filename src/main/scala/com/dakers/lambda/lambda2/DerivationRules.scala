@@ -5,32 +5,33 @@ import com.dakers.lambda.{App, STNotation, UTNotation, Var}
 import π.subst;
 
 object VarRule {
-  def apply(judgement: Judgement[L2Statement]): Option[Judgement[L2Statement]] = judgement.subject match {
-    case L2Statement(Var(x), sType) => if (judgement.gamma.stmts.contains(judgement.subject)) Some(judgement) else None
+  def apply(judgement: L2Judgement): Option[L2Judgement] = judgement.s.get match {
+    case L2Statement(Var(x), sType) => if (judgement.l2Context.stmtContext.stmts().contains(judgement.s.get)) Some(judgement) else None
     case _ => None
   }
 }
 
 
 object ApplRule {
-  def apply(judgement1: Judgement[L2Statement], judgement2: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
-    if (judgement1.gamma != judgement2.gamma) {
-      val gamma1 = judgement1.gamma
-      val gamma2 = judgement2.gamma
+  def apply(judgement1: L2Judgement, judgement2: L2Judgement): Option[L2Judgement] = {
+    if (judgement1.l2Context != judgement2.l2Context) {
+      val gamma1 = judgement1.l2Context
+      val gamma2 = judgement2.l2Context
       println(s"No match; provided judgements with different contexts. Judgement 1: $gamma1. Judgement 2: $gamma2.")
       None
     }
     else {
-      judgement1.subject.l2Type match {
+      val case1 = judgement2.s.get.l2Type
+      judgement1.s.get.l2Type match {
         case ArrType(s, t) => s match {
-          case judgement2.subject.l2Type => Some(Judgement(judgement1.gamma, L2Statement(App(judgement1.subject.utTerm, judgement2.subject.utTerm), t)))
+          case `case1` => Some(L2Judgement(judgement1.l2Context, L2Statement(App(judgement1.s.get.utTerm, judgement2.s.get.utTerm), t)))
           case _ => {
-            println(s"Second statement was not of the expected type. L2Statement 1: " + judgement1.subject.l2Type + "; " + judgement2.subject.utTerm)
+            println(s"Second statement was not of the expected type. L2Statement 1: " + judgement1.s.get.l2Type + "; " + judgement2.s.get.utTerm)
             None
           }
         }
         case _ => {
-          println("First statement did was not an arrow type: " + judgement1.subject)
+          println("First statement did was not an arrow type: " + judgement1.s.get)
           None
         }
       }
@@ -49,18 +50,18 @@ object Form2 extends L2Notation with STNotation with UTNotation {
   }
 }
 
-object Appl2 extends L2Notation with STNotation with UTNotation {
-  def apply(m: Judgement[L2Statement], n: Judgement[L2Statement]): Option[Judgement[L2Statement]] = {
-    if (m.gamma != n.gamma) {
-      println("Contexts were not the same")
-      None
-    }
-    m.subject.l2Type match {
-      case π(l2, vt) => Some(Judgement(m.gamma, L2Statement(m.subject.utTerm * n.subject.utTerm, subst(m.subject.l2Type, vt, n.subject.l2Type))))
-      case _ => {
-        println("First term given to Appl2 was not a pi type")
-        None
-      }
-    }
-  }
-}
+//object Appl2 extends L2Notation with STNotation with UTNotation {
+//  def apply(m: L2Judgement, n: L2Judgement): Option[Judgement[L2Statement]] = {
+//    if (m.l2Context != n.gamma) {
+//      println("Contexts were not the same")
+//      None
+//    }
+//    m.subject.l2Type match {
+//      case π(l2, vt) => Some(Judgement(m.gamma, L2Statement(m.subject.utTerm * n.subject.utTerm, subst(m.subject.l2Type, vt, n.subject.l2Type))))
+//      case _ => {
+//        println("First term given to Appl2 was not a pi type")
+//        None
+//      }
+//    }
+//  }
+//}
