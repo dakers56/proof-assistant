@@ -14,8 +14,9 @@ trait L2Type
 object L2Type {
   def red1s(fullType: L2Type, oldType: L2Type, newType: L2Type): L2Type = {
     fullType match {
-      case VarType(x) => if (oldType == VarType(x)) newType else oldType
+      case VarType(x) => if (oldType == VarType(x)) newType else fullType
       case ArrType(s, t) => ArrType2(red1s(s, oldType, newType), red1s(t, oldType, newType))
+      case ArrType2(s, t) => ArrType2(red1s(s, oldType, newType), red1s(t, oldType, newType))
     }
   }
 }
