@@ -1,13 +1,15 @@
 package com.dakers.lambda.lambda2
 
 import com.dakers.lambda.stlc.{ArrType, VarType}
-import com.dakers.lambda.{FBVars, UTTerm}
+import com.dakers.lambda.{Abst, FBVars, UTTerm}
 
 case class L2Statement(utTerm: UTTerm, l2Type: *) {
   override def toString: String = utTerm.toString + ":" + l2Type.toString
 }
 
-case class L2TypeDecl(nm: String)
+case class L2TypeDecl(nm: String) {
+  override def toString: String = nm + ":*"
+}
 
 /**
  * Represents the type of all types*/
@@ -67,6 +69,8 @@ case class ArrType2(l2Type: *, l2Type1: *) extends * {
   override def toString: String = "(" + l2Type.toString + "->" + l2Type1.toString + ")"
 }
 
-
+//class Abst2(val ut: Abst, t: VarType) extends Abst(ut, v) {
+//  override def toString: String = "/|" + v.toString + ":" + vt + "." + ut.toString
+//}
 
 

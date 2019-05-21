@@ -1,7 +1,5 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.lambda2.ApplRule.Form2
-import com.dakers.lambda.stlc.Judgement
 import com.dakers.lambda.{STNotation, UTNotation}
 import org.scalatest.{FlatSpec, Matchers}
 

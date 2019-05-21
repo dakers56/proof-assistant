@@ -1,0 +1,23 @@
+#README
+
+This project was an attempt to create proof objects, much like a proof assistant would. I wanted to understand more about the innner
+workings of Coq and its like, and begin to go beyond tactics and pattern matching.
+To that end, I decided to create my own implementation of the STLC and second order lambda calculus (henceforth LC2). My goal
+was to eventually begin to prove basic facts about simple data types that can be constructed in LC2. For instance, booleans, natural numbers
+and binary trees can all be represented in LC2.
+My research primarily consisted of two sources: "Type Theory and Formal Proof: An Introduction", by Rob Nederpelt, and "Lambda Calculus With Types"
+by Barendregt. My research focused on the first six chapters of the former, and the first two of the latter.
+I tried to be very careful with unit testing as I proceeded, writing over 200 tests, all of which currently pass. Lambda calculus may be intuitive,
+but there are many details one could trip over, so I did my best to avoid mistakes.
+However, in the end, this was not enough. Once I began to try to prove things using my derivation system, I was flummoxed. Despite my tests passing, beta reduction
+did not perform as I had expected. My code had particular trouble dealing with terms that had shared variable names. Even when I tried applying alpha
+conversion, beta reduction did not perform as expected. My guess is that there is something wrong with my Alpha Conversion code.
+So as I write this README I am more than a bit disappointed, and hope that the volume of testing and code will at least demonstrate that I poured great
+effort into this project. I suppose that I have learned at least two things from this disappointment:
+1. Don't bite off more than you can chew
+2. Unit testing is never enough. Until your code performs "in the wild", it is impossible to know how resilient it is
+Still, however, I have greatly enjoyed this opportunity to learn more about formal proof, and intend to keep working on this project on my own.
+I wish it were in a better state for submission, but at least I can continue to learn from it on my own time.
+
+#
+To run the tests, use sbt

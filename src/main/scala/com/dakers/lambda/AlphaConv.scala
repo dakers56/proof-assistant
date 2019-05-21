@@ -48,18 +48,10 @@ object AlphaConv {
    * @return
    */
   def subst(M: UTTerm, N: UTTerm, x: String): UTTerm = {
-    if (M.bound(x)) {
-      throw new RuntimeException(s"$x was already a bound variable in $M")
-    }
-    var intersection = M.free intersect (N.free)
-    intersection = M.bound intersect (N.bound)
-    if (!intersection.isEmpty) {
-      throw new RuntimeException(s"$M and $N had bound variables in common: $intersection")
-    }
     M match {
       case Var(v) => if (v == x) N else M
       case App(t1, t2) => App(subst(t1, N, x), subst(t2, N, x))
-      case Abst(m, z) => if (z == Var(x)) throw new RuntimeException(s"Cannot substitute for bound variable $z in $m") else Abst(subst(m, N, x), z)
+      case Abst(m, z) => Abst(subst(m, N, x), z)
     }
 
   }

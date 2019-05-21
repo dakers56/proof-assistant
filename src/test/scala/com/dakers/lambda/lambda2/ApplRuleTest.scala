@@ -1,7 +1,6 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.stlc.Judgement
-import com.dakers.lambda.{STNotation, UTNotation, stlc}
+import com.dakers.lambda.{STNotation, UTNotation}
 import org.scalatest.{FlatSpec, Matchers}
 
 class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotation with L2Notation {
@@ -11,7 +10,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = "x" :|| "S".tv ->: "T".tv
     val st2 = "y" :|| "S"
     val ctx = L2Context(List(st1, st2))
-    ApplRule(Judgement[L2Statement](ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, "x" * "y" :|| "T")))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, "x" * "y" :|| "T")))
   }
 
   // Variable to a function type
@@ -19,7 +18,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = "x" :|| "S".tv ->: "T".tv ->: "U".tv
     val st2 = "y" :|| "S"
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, "x" * "y" :|| "T" ->: "U".tv)))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, "x" * "y" :|| "T" ->: "U".tv)))
   }
 
   // Associativity: variable type to a function type
@@ -27,7 +26,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = "x" :|| ("S".tv ->: "T".tv) ->: "U".tv
     val st2 = "y" :|| "S" ->: "T".tv
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, "x" * "y" :|| "U")))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, "x" * "y" :|| "U")))
   }
 
   // Associativity: function type to a function type
@@ -35,7 +34,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = "x" :|| ("S".tv ->: "T".tv) ->: "U".tv ->: "V".tv
     val st2 = "y" :|| "S" ->: "T".tv
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, "x" * "y" :|| "U" ->: "V".tv)))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, "x" * "y" :|| "U" ->: "V".tv)))
   }
 
   //Application of  a variable to an abstraction term
@@ -43,7 +42,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = /|("x", "x") :|| "T".tv ->: "U".tv
     val st2 = "y" :|| "T"
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, /|("x", "x") * "y" :|| "U")))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, /|("x", "x") * "y" :|| "U")))
   }
 
   //Application of  an abstraction term to a variable term
@@ -51,7 +50,7 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = /|("x", "x") :|| "S" ->: "T" ->: "U".tv
     val st2 = "y" :|| "S"
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(Some(stlc.Judgement(ctx, /|("x", "x") * "y" :|| "T".tv ->: "U".tv)))
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(Some(L2Judgement(ctx, /|("x", "x") * "y" :|| "T".tv ->: "U".tv)))
   }
 
   //Negative cases
@@ -60,14 +59,14 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st1: L2Statement = "x" :|| "T"
     val st2 = "y" :|| "S"
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(None)
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(None)
   }
 
   "Applying x : T to y : S -> T " should " fail" in {
     val st1: L2Statement = "x" :|| "T"
     val st2 = "y" :|| "S" ->: "T".tv
     val ctx = L2Context(List(st1, st2))
-    ApplRule(stlc.Judgement(ctx, st1), stlc.Judgement(ctx, st2)) should be(None)
+    ApplRule(L2Judgement(ctx, st1), L2Judgement(ctx, st2)) should be(None)
   }
 
   "Different contexts and a valid application xy where x : S -> T, y: S" should "fail" in {
@@ -76,6 +75,6 @@ class ApplRuleTest extends FlatSpec with Matchers with UTNotation with STNotatio
     val st3 = "z" :|| "S" ->: "T".tv
     val ctx1 = L2Context(List(st1, st2))
     val ctx2 = L2Context(List(st1, st2, st3))
-    ApplRule(stlc.Judgement(ctx1, st1), stlc.Judgement(ctx2, st2)) should be(None)
+    ApplRule(L2Judgement(ctx1, st1), L2Judgement(ctx2, st2)) should be(None)
   }
 }

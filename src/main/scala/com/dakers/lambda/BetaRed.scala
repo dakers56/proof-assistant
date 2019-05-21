@@ -1,19 +1,15 @@
 package com.dakers.lambda
 
-import com.dakers.lambda.stlc.{STStatement, SimpleType}
-
 object BetaRed {
 
   def red1s(term: UTTerm, x: String): UTTerm = {
     term match {
       case App(Abst(m, Var(x)), n) =>
         AlphaConv.subst(m, n, x)
-      case a: Abst => a
-      case _ => println(s"$term was already in beta-normal form"); term
+      case Abst(t, u) => Abst(AlphaConv.subst(t, term, x), u)
+      case Var(v) => if (x == v) Var(v) else term
     }
   }
-
-
 
   def redexes(term: UTTerm): List[App] = redexes(term, List())
 

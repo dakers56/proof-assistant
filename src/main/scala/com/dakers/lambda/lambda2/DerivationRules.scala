@@ -1,8 +1,8 @@
 package com.dakers.lambda.lambda2
 
-import com.dakers.lambda.stlc.{ArrType, Judgement}
-import com.dakers.lambda.{App, STNotation, UTNotation, Var}
-import π.subst;
+import com.dakers.lambda._
+import com.dakers.lambda.lambda2.π.subst
+import com.dakers.lambda.stlc.{ArrType, Judgement, VarType};
 
 object VarRule {
   def apply(judgement: L2Judgement): Option[L2Judgement] = judgement.s.get match {
@@ -50,18 +50,87 @@ object Form2 extends L2Notation with STNotation with UTNotation {
   }
 }
 
-//object Appl2 extends L2Notation with STNotation with UTNotation {
-//  def apply(m: L2Judgement, n: L2Judgement): Option[Judgement[L2Statement]] = {
-//    if (m.l2Context != n.gamma) {
-//      println("Contexts were not the same")
-//      None
-//    }
-//    m.subject.l2Type match {
-//      case π(l2, vt) => Some(Judgement(m.gamma, L2Statement(m.subject.utTerm * n.subject.utTerm, subst(m.subject.l2Type, vt, n.subject.l2Type))))
-//      case _ => {
-//        println("First term given to Appl2 was not a pi type")
-//        None
-//      }
-//    }
-//  }
-//}
+object Appl2 extends L2Notation with STNotation with UTNotation {
+  def apply(m: L2Judgement, n: L2Judgement): Option[L2Judgement] = {
+    if (m.l2Context != n.l2Context) {
+      println("Contexts were not the same")
+      None
+    }
+    m.s.get.l2Type match {
+      case π(l2, vt) => Some(L2Judgement(m.l2Context, L2Statement(m.s.get.utTerm * n.s.get.utTerm, subst(m.s.get.l2Type, vt, n.s.get.l2Type))))
+      case _ => {
+        println("First term given to Appl2 was not a pi type")
+        None
+      }
+    }
+  }
+}
+
+
+object AbstRule {
+  def apply(judgement: L2Judgement, varName: String, varType: VarType): Option[L2Judgement] = {
+    /**
+     * If there are no variable declarations in the context, we cannot get a term of the form x:T to abstract with.
+     * So long as such a term exists in the context, we may permute the context to get it such that the variable
+     * declaration comes last.
+     */
+    val l = judgement.l2Context.stmtContext.stmts()
+    if (l.isEmpty) return None
+    if (judgement.s.isEmpty) return None
+
+
+    //Check if there is a variable declaration
+    val searchFor = L2Statement(Var(varName), varType)
+    val varDecl: Option[L2Statement] = judgement.l2Context.stmtContext.stmts().filter(s => s == searchFor).headOption
+    if (varDecl.isEmpty) {
+      println("No such variable declaration was in the context: " + searchFor)
+      return None
+    }
+
+    val M = judgement.s.get
+    val abstVar: Var = varDecl.get.utTerm.asInstanceOf[Var]
+    val abstVarType: VarType = varDecl.get.l2Type.asInstanceOf[VarType]
+    val abstTermUt: Abst = Abst(M.utTerm, abstVar)
+    val newStmts: List[L2Statement] = judgement.l2Context.stmtContext.stmts().filterNot(s => s == varDecl.get)
+    val ctx: L2Context = L2Context(newStmts, judgement.l2Context.typeContext.stmts())
+    val arrType = ArrType2(abstVarType, judgement.s.get.l2Type)
+    val st: Option[L2Statement] = Some(L2Statement(abstTermUt, arrType))
+    Some(L2Judgement(ctx, st, None))
+  }
+
+
+}
+
+object AbstRule2 {
+  def apply(judgement: L2Judgement, varName: String): Option[L2Judgement] = {
+    /**
+     * If there are no variable declarations in the context, we cannot get a term of the form x:T to abstract with.
+     * So long as such a term exists in the context, we may permute the context to get it such that the variable
+     * declaration comes last.
+     */
+    if (judgement.s.isEmpty) {
+      println("No statement was provided for the judgement")
+      return None
+    }
+    val l = judgement.l2Context.typeContext.stmts()
+    if (l.isEmpty) return None
+    if (judgement.s.isEmpty) return None
+
+
+    //Check if there is a variable declaration
+    val searchFor: L2TypeDecl = L2TypeDecl(varName)
+    val varDecl: Option[L2TypeDecl] = judgement.l2Context.typeContext.stmts().find(s => s == searchFor)
+    if (varDecl.isEmpty) {
+      println("No such variable declaration was in the context: " + searchFor)
+      return None
+    }
+
+    val newStmts: List[L2TypeDecl] = judgement.l2Context.typeContext.stmts().filterNot(s => s == varDecl.get)
+    val ctx: L2Context = L2Context(judgement.l2Context.stmtContext.stmts(), newStmts)
+    val piType = π(judgement.s.get.l2Type, VarType(varName))
+    val st: Option[L2Statement] = Some(L2Statement(judgement.s.get.utTerm, piType))
+    Some(L2Judgement(ctx, st, None))
+  }
+
+
+}

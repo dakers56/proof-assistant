@@ -154,12 +154,12 @@ class AlphaConvTest extends FlatSpec with Matchers {
     AlphaConv.subst(App(Var("x"), Var("y")), Var("z"), "x") should be(App(Var("z"), Var("y")))
   }
 
-  //Case: Abstraction over a single variable
-  s"($binder)x($sep)x[x:=y]" should " throw an exception" in {
-    intercept[RuntimeException](
-      AlphaConv.subst(Abst(Var("x"), Var("x")), Var("y"), "x")
-    )
-  }
+//  //Case: Abstraction over a single variable
+//  s"($binder)x($sep)x[x:=y]" should " throw an exception" in {
+//    intercept[RuntimeException](
+//      AlphaConv.subst(Abst(Var("x"), Var("x")), Var("y"), "x")
+//    )
+//  }
 
   s"($binder)x($sep)x[y:=x]" should " equal x" in {
     val idFunc = Abst(Var("x"), Var("x"))
